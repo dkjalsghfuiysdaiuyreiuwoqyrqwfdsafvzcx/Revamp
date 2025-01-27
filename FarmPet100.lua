@@ -1,4 +1,4 @@
--- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
+-- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogss
 -- Currrent version FarmPet105e.lua
 -- Added auto rejoin
 
@@ -119,8 +119,8 @@ local function FarmPetGui()
                         -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
                         -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
                         -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
-                        Player:Kick("Tutorial completed please restart game!")
-                        HasTradeLic = true
+                        -- Player:Kick("Tutorial completed please restart game!")
+                        -- HasTradeLic = true
                     end
                 end
             else
