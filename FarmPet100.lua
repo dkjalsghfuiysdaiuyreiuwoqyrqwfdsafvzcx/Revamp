@@ -1,4 +1,4 @@
--- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdog
+-- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
 -- Currrent version FarmPet105e.lua
 -- Added auto rejoin
 
@@ -1655,23 +1655,23 @@ local function FarmPet()
                 for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
                     xc = xc + 1
                     if v.id == "trade_license" then
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/SetTutorialInProgressBool"):FireServer(true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/SetTutorialInProgressBool"):FireServer(true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
+                        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
                         HasTradeLic = true
                     end
                 end
@@ -1682,23 +1682,23 @@ local function FarmPet()
             end
         end
 
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/SetTutorialInProgressBool"):FireServer(true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/SetTutorialInProgressBool"):FireServer(true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
+        -- game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
         
 
         local function FireSig(button)
@@ -3185,9 +3185,6 @@ local function FarmPet()
             potionValue.Text = tostring(currentPotionCount) .. " (+" .. tostring(potionChange) .. ")"
             timeValue.Text = formattedTime
             taskValue.Text = tostring(taskName or "None")
-            if petWrappers and petWrappers[1] and petWrappers[1]["char"] then
-                petToEquipName = petWrappers[1]["char"]
-            end
             petValue.Text = tostring(petToEquipName or "None") -- Ensure `petToEquipName` is set elsewhere in your script
             farmType.Text = _G.FarmTypeRunning
         end
