@@ -1,4 +1,4 @@
--- Egg Farm hotdogs v4.0
+-- Egg Farm hotdogs v4.1
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -308,7 +308,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                     local currentPetUnique = equipManagerPets[1].unique
             
                     -- Check if we need to set petToEquip
-                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (not currentPetKind:lower():match("egg$") and Cash > 750 and AutoBuyEggs) then
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
                         
                         local foundPet = false
                         for _, pet in pairs(inventoryPets or {}) do
@@ -320,7 +320,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                         end
                         
                         if not foundPet then
-                            if Cash > 750 and AutoBuyEggs then
+                            if Cash > 750 and getgenv().AutoBuyEggs then
                                 local args = {
                                     [1] = "pets",
                                     [2] = eggToFarm,
@@ -346,10 +346,10 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                     end
                     
                     if not foundPet then
-                        if Cash > 750 and AutoBuyEggs then
+                        if Cash > 750 and getgenv().AutoBuyEggs then
                             local args = {
                                 [1] = "pets",
-                                [2] = eggToFarm,
+                                [2] = getgenv().eggToFarm,
                                 [3] = {
                                     ["buy_count"] = 1
                                 }
