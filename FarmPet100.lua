@@ -769,7 +769,7 @@ local function FarmPetGui()
         _G.FarmTypeRunning = "none"
 
         -- EVENT #############################################
-        local maps = { "MainMap" } -- List of map names
+        local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
         local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
         
         for _, mapName in ipairs(maps) do
@@ -2298,7 +2298,7 @@ local function FarmPet()
         _G.FarmTypeRunning = "none"
 
         -- EVENT #############################################
-        local maps = { "MainMap" } -- List of map names
+        local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
         local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
         
         for _, mapName in ipairs(maps) do
