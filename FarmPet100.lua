@@ -180,7 +180,6 @@ local function FarmPetGui()
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
-                        Player:Kick("Tutorial completed please restart game!")
                         HasTradeLic = true
                     end
                 end
@@ -1761,7 +1760,6 @@ local function FarmPet()
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
-                        Player:Kick("Tutorial completed please restart game!")
                         HasTradeLic = true
                     end
                 end
