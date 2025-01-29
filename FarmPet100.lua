@@ -1,74 +1,73 @@
--- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
--- Currrent version FarmPet105e.lua
--- Added pet me task
+if not _G.ScriptRunning then
+    -- hotdogs
+    -- Fixed loop
 
-if not hookmetamethod then
-    return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
-end
+    if not hookmetamethod then
+        return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
+    end
 
-local TeleportService = game:GetService("TeleportService")
-local oldIndex
-local oldNamecall
+    local TeleportService = game:GetService("TeleportService")
+    local oldIndex
+    local oldNamecall
 
--- Hook __index to intercept TeleportService method calls
-oldIndex = hookmetamethod(game, "__index", function(self, key)
-    if self == TeleportService and (key:lower() == "teleport" or key == "TeleportToPlaceInstance") then
-        return function()
-            error("Teleportation blocked by anti-teleport script.", 2)
+    -- Hook __index to intercept TeleportService method calls
+    oldIndex = hookmetamethod(game, "__index", function(self, key)
+        if self == TeleportService and (key:lower() == "teleport" or key == "TeleportToPlaceInstance") then
+            return function()
+                error("Teleportation blocked by anti-teleport script.", 2)
+            end
         end
-    end
-    return oldIndex(self, key)
-end)
+        return oldIndex(self, key)
+    end)
 
--- Hook __namecall to intercept method calls like TeleportService:Teleport(...)
-oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-    local method = getnamecallmethod()
-    if self == TeleportService and (method:lower() == "teleport" or method == "TeleportToPlaceInstance") then
-        return
-    end
-    return oldNamecall(self, ...)
-end)
-
-print('Anti-Rejoin', 'Teleportation prevention is now active.')
-
-
-local function FarmPetGui()
-    local router
-    for i, v in next, getgc(true) do
-        if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
-            router = v
+    -- Hook __namecall to intercept method calls like TeleportService:Teleport(...)
+    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+        local method = getnamecallmethod()
+        if self == TeleportService and (method:lower() == "teleport" or method == "TeleportToPlaceInstance") then
+            return
         end
-    end
-    
-    local function rename(remotename, hashedremote)
-        hashedremote.Name = remotename
-    end
-    table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
+        return oldNamecall(self, ...)
+    end)
 
-    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    local PetData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
-    
-    getgenv().PetFarmGuiStarter = false
-    local petToEquipForFarming 
-    local petOptions = {}
-    local petToEquip
-    
-    -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105c.lua)
-    -- Currrent version FarmPet105d.lua
-    
-    if not _G.ScriptRunning then
+    print('Anti-Rejoin', 'Teleportation prevention is now active.')
+
+
+    local function FarmPetGui()
+        local router
+        for i, v in next, getgc(true) do
+            if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
+                router = v
+            end
+        end
+        
+        local function rename(remotename, hashedremote)
+            hashedremote.Name = remotename
+        end
+        table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
+
+        local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+        local PetData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
+        
+        getgenv().PetFarmGuiStarter = false
+        local petToEquipForFarming 
+        local petOptions = {}
+        local petToEquip
+        
+        -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105c.lua)
+        -- Currrent version FarmPet105d.lua
+        
         _G.ScriptRunning = true
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         local CoreGui = game:GetService("CoreGui")
         local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
-    
+
         local playButton = game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.EnclosingFrame.MainFrame.Contents.PlayButton
         local babyButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby
         local rbxProductButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Buttons.ButtonTemplate
         local claimButton = game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Frame.Body.Buttons.ClaimButton
-    
+
         local router
         for i, v in next, getgc(true) do
             if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
@@ -80,16 +79,16 @@ local function FarmPetGui()
         end
         -- Apply renaming to upvalues of the RouterClient.init function
         table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
-    
-    
+
+
         local object = game.ServerScriptService -- Replace this with the correct object path
-    
+
         game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
             if state == Enum.TeleportState.Started then
                 game:GetService("TeleportService"):Cancel()
             end
         end)
-    
+
         task.wait(1)
         local xc = 0
         local NewAcc = false
@@ -222,7 +221,7 @@ local function FarmPetGui()
         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
         
-    
+
         -- Function to get current money value
         local function getCurrentMoney()
             local currentMoneyText = Player.PlayerGui.BucksIndicatorApp.CurrencyIndicator.Container.Amount.Text
@@ -233,30 +232,30 @@ local function FarmPetGui()
             end
             return currentMoney
         end
-    
+
         task.wait(1)
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         local focusPetApp = Player.PlayerGui.FocusPetApp.Frame
         local ailments = focusPetApp.Ailments
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    
+
         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    
-    
+
+
         local virtualUser = game:GetService("VirtualUser")
-    
+
         Player.Idled:Connect(function()
             virtualUser:CaptureController()
             virtualUser:ClickButton2(Vector2.new())
         end)
-    
+
         -- ###########################################################################################################
-    
-    
+
+
         local function GetFurniture(furnitureName)
             local furnitureFolder = workspace.HouseInteriors.furniture
-    
+
             if furnitureFolder then
                 for _, child in pairs(furnitureFolder:GetChildren()) do
                     if child:IsA("Folder") then
@@ -274,16 +273,16 @@ local function FarmPetGui()
                 end
             end
         end
-    
+
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-    
-    
+
+
         -- ########################################################################################################################################################################
-    
+
         
-    
+
         local levelOfPet = 0
-    
+
         local function  getHighestLevelPet()
             for i, v in pairs(fsys.get("inventory").pets) do
                 if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
@@ -340,7 +339,7 @@ local function FarmPetGui()
                 end
             end
             
-    
+
             if petToEquip then
                 game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
                 task.wait(.3)
@@ -351,7 +350,7 @@ local function FarmPetGui()
             --print(petToEquipForFarming)
             --print(petToEquip)
         end
-    
+
         -- Check if pcall was successful
         local function unequipPet()
             getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -373,14 +372,14 @@ local function FarmPetGui()
             
             end
         end
-    
-    
+
+
         local function createPlatformForce()
             
                 local Player = game.Players.LocalPlayer
                 local character = Player.Character or Player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    
+
                 -- Count existing platforms in the workspace
                 local existingPlatforms = 0
                 for _, object in pairs(workspace:GetChildren()) do
@@ -388,28 +387,28 @@ local function FarmPetGui()
                         existingPlatforms += 1
                     end
                 end
-    
+
                 local platform = Instance.new("Part")
                 platform.Name = "CustomPlatform" -- Unique name to identify the platform
                 platform.Size = Vector3.new(1100, 1, 1100) -- Size of the platform
                 platform.Anchored = true -- Make sure the platform doesn't fall
                 platform.CFrame = humanoidRootPart.CFrame * CFrame.new(0, -5, 0) -- Place 5 studs below the player
-    
+
                 -- Set part properties
                 platform.BrickColor = BrickColor.new("Bright yellow") -- You can change the color
                 platform.Parent = workspace -- Parent to the workspace so it's visible
                 equipPet()
         end
-    
-    
-    
+
+
+
         -- ########################################################################################################################################################################
-    
+
         local function createPlatform()
                 local Player = game.Players.LocalPlayer
                 local character = Player.Character or Player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    
+
                 -- Count existing platforms in the workspace
                 local existingPlatforms = 0
                 for _, object in pairs(workspace:GetChildren()) do
@@ -417,28 +416,28 @@ local function FarmPetGui()
                         existingPlatforms += 1
                     end
                 end
-    
+
                 -- Check if the number of platforms exceeds 5
                 if existingPlatforms >= 5 then
                     --print("Maximum number of platforms reached, skipping creation.")
                     return
                 end
-    
+
                 -- Debug message
                 --print("Teleport successful, creating platform...")
-    
+
                 -- Create the platform part
                 local platform = Instance.new("Part")
                 platform.Name = "CustomPlatform" -- Unique name to identify the platform
                 platform.Size = Vector3.new(1100, 1, 1100) -- Size of the platform
                 platform.Anchored = true -- Make sure the platform doesn't fall
                 platform.CFrame = humanoidRootPart.CFrame * CFrame.new(0, -5, 0) -- Place 5 studs below the player
-    
+
                 -- Set part properties
                 platform.BrickColor = BrickColor.new("Bright yellow") -- You can change the color
                 platform.Parent = workspace -- Parent to the workspace so it's visible
         end
-    
+
         local function teleportToMainmap()
             local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
             local OrigThreadID = getthreadidentity()
@@ -450,7 +449,7 @@ local function FarmPetGui()
             })
             setidentity(OrigThreadID)
         end
-    
+
         local function teleportPlayerNeeds(x, y, z)
             local Player = game.Players.LocalPlayer
             if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
@@ -459,20 +458,20 @@ local function FarmPetGui()
                 --print("Player or character not found!")
             end
         end
-    
+
         local function BabyJump()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/BabyJump"):FireServer(fsys.get("char_wrapper")["char"])
         end
-    
-    
-    
+
+
+
         getgenv().BedID = GetFurniture("EggCrib")
         getgenv().ShowerID = GetFurniture("StylishShower")
         getgenv().PianoID = GetFurniture("Piano")
         getgenv().WaterID = GetFurniture("PetWaterBowl")
         getgenv().FoodID = GetFurniture("PetFoodBowl")
         getgenv().ToiletID = GetFurniture("Toilet")
-    
+
         -- Get current money
         local startingMoney = getCurrentMoney()
         local function buyItems()
@@ -543,7 +542,7 @@ local function FarmPetGui()
                 end
             end
         end
-    
+
         local function removeItemByValue(tbl, value)
             for i = 1, #tbl do
                 if tbl[i] == value then
@@ -552,26 +551,26 @@ local function FarmPetGui()
                 end
             end
         end
-    
-    
+
+
         -- ########################################################################################################################################################################
-    
+
         -- Define the new path
         -- local ailments_list = Player.PlayerGui:WaitForChild("ailments_list")
-    
+
         local function get_mystery_task()
             local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-    
+
             for ailmentId, ailment in pairs(PetAilmentsData) do
                 for taskId, task in pairs(ailment) do
                     if task.kind == "mystery" and task.components and task.components.mystery then
                         local ailmentKey = task.components.mystery.ailment_key
                         local foundMystery = false
-    
+
                         for i = 1, 3 do
                             if foundMystery then break end
-    
+
                             wait(0.5)
                             pcall(function()
                                 local actions = {"hungry", "thirsty", "sleepy", "toilet", "bored", "dirty", "play", "school", "salon", "pizza_party", "sick", "camping", "beach_party", "walk", "ride"}
@@ -582,14 +581,14 @@ local function FarmPetGui()
                                         foundMystery = true
                                         break
                                     end
-    
+
                                     wait(0.5)
                                     local args = {
                                         [1] = ailmentKey,
                                         [2] = i,
                                         [3] = action
                                     }
-    
+
                                     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
                                 end
                             end)
@@ -598,13 +597,13 @@ local function FarmPetGui()
                 end
             end
         end
-    
+
         local PetAilmentsArray = {}
         local BabyAilmentsArray = {}
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
         local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
         local BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-    
+
         local function getAilments(tbl)
             PetAilmentsArray = {}
             for key, value in pairs(tbl) do
@@ -616,13 +615,13 @@ local function FarmPetGui()
                 end
             end
         end
-    
+
         Player.PlayerGui.TransitionsApp.Whiteout:GetPropertyChangedSignal("BackgroundTransparency"):Connect(function()
             if Player.PlayerGui.TransitionsApp.Whiteout.BackgroundTransparency == 0 then
                 Player.PlayerGui.TransitionsApp.Whiteout.BackgroundTransparency = 1
             end
         end)
-    
+
         local function getBabyAilments(tbl)
             BabyAilmentsArray = {}
             for key, value in pairs(tbl) do
@@ -630,7 +629,7 @@ local function FarmPetGui()
                 --print("Baby ailment: ", key)
             end
         end
-    
+
         -- Function to buy an item
         local function buyItem(itemName)
             local args = {
@@ -640,7 +639,7 @@ local function FarmPetGui()
             }
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
         end
-    
+
         -- Function to get the ID of a specific food item
         local function getFoodID(itemName)
             local ailmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
@@ -651,7 +650,7 @@ local function FarmPetGui()
             end
             return nil
         end
-    
+
         -- Function to use an item multiple times
         local function useItem(itemID, useCount)
             for i = 1, useCount do
@@ -663,7 +662,7 @@ local function FarmPetGui()
                 task.wait(0.1)
             end
         end
-    
+
         local function hasTargetAilment(targetKind)
             local ailments = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
             for _, ailment in pairs(ailments) do
@@ -673,9 +672,9 @@ local function FarmPetGui()
             end
             return false
         end
-    
-    
-    
+
+
+
         task.wait(1)
         -- ########################################################################################################################################################################
         local taskName = "none"
@@ -737,34 +736,34 @@ local function FarmPetGui()
                 --print("done thristy")
             end
         end
-    
-    
+
+
         local function EatDrinkSafeCall(isEquippedPet)
             local success = false
-    
+
             while not success do
                 success, err = pcall(function()
                     EatDrink(isEquippedPet)
                 end)
-    
+
                 if not success then
                     warn("Error occurred: ", err)
                     task.wait(1) -- wait for a second before retrying
                 end
             end
-    
+
             --print("EatDrink executed successfully without errors.")
         end
-    
-    
-    
-    
+
+
+
+
         -- ########################################################################################################################################################################
         for _, pet in ipairs(workspace.Pets:GetChildren()) do
             --print(pet.Name)
             petName = pet.Name
         end
-    
+
         _G.FarmTypeRunning = "none"
 
         -- EVENT #############################################
@@ -799,7 +798,7 @@ local function FarmPetGui()
             createPlatform()
             equipPet()
             task.wait(1)
-    
+
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
@@ -815,8 +814,8 @@ local function FarmPetGui()
             if humanoid then
                 humanoid.PlatformStand = false -- Allow normal movement and physics
             end   
-    
-    
+
+
             while true do
                 while getgenv().PetFarmGuiStarter do
                     _G.FarmTypeRunning = "Pet/Baby"
@@ -1515,116 +1514,112 @@ local function FarmPetGui()
             
             
         end
-    
+
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-    
+
         local RunService = game:GetService("RunService")
         local currentText
-    
+
         task.wait(10)
         task.spawn(startPetFarm)
-    else
-        print("Script already running")
-    end
-    
-    local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-    
-    local Window = Rayfield:CreateWindow({
-        Name = "HiraXRey",
-        Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-        LoadingTitle = "HiraXRey",
-        LoadingSubtitle = "by Rey",
-        Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
-     
-        DisableRayfieldPrompts = false,
-        DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
-     
-        ConfigurationSaving = {
-           Enabled = true,
-           FolderName = nil, -- Create a custom folder for your hub/game
-           FileName = "Big Hub"
-        },
-     
-        Discord = {
-           Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-           Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-           RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-        },
-     
-        KeySystem = false, -- Set this to true to use our key system
-        KeySettings = {
-           Title = "Untitled",
-           Subtitle = "Key System",
-           Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
-           FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-           SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-           GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-           Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-        }
-     })
-    
-    
-    
-     local Tab = Window:CreateTab("Pet Farm", 4483362458) -- Title, Image
-    
-    
-     -- Initialize an empty table for options
-    
-    -- Loop through PetData and add y.kind to the options table
-    for x, y in pairs(PetData) do
-        if y.kind then
-            table.insert(petOptions, y.kind)
-        end
-    end
-    
-    
-    
-    local function equipSelectedPet(selectedPet)
+        
+        local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+        
+        local Window = Rayfield:CreateWindow({
+            Name = "HiraXRey",
+            Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+            LoadingTitle = "HiraXRey",
+            LoadingSubtitle = "by Rey",
+            Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+        
+            DisableRayfieldPrompts = false,
+            DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+        
+            ConfigurationSaving = {
+            Enabled = true,
+            FolderName = nil, -- Create a custom folder for your hub/game
+            FileName = "Big Hub"
+            },
+        
+            Discord = {
+            Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
+            Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+            RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+            },
+        
+            KeySystem = false, -- Set this to true to use our key system
+            KeySettings = {
+            Title = "Untitled",
+            Subtitle = "Key System",
+            Note = "No method of obtaining the key is provided", -- Use this to tell the user how to get a key
+            FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
+            SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
+            GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+            Key = {"Hello"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
+            }
+        })
+        
+        
+        
+        local Tab = Window:CreateTab("Pet Farm", 4483362458) -- Title, Image
+        
+        
+        -- Initialize an empty table for options
+        
+        -- Loop through PetData and add y.kind to the options table
         for x, y in pairs(PetData) do
-            if y.kind == selectedPet then
-                petToEquip = y.unique
-                --print("This is the new petToEquip")
-                local args = {
-                    [1] = y.unique,
-                    [2] = {
-                        ["use_sound_delay"] = true,
-                        ["equip_as_last"] = false
-                    }
-                }
-                
-                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(unpack(args))
-                break
+            if y.kind then
+                table.insert(petOptions, y.kind)
             end
         end
+        
+        
+        
+        local function equipSelectedPet(selectedPet)
+            for x, y in pairs(PetData) do
+                if y.kind == selectedPet then
+                    petToEquip = y.unique
+                    --print("This is the new petToEquip")
+                    local args = {
+                        [1] = y.unique,
+                        [2] = {
+                            ["use_sound_delay"] = true,
+                            ["equip_as_last"] = false
+                        }
+                    }
+                    
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(unpack(args))
+                    break
+                end
+            end
+        end
+        
+        
+        -- Create the dropdown with the dynamically populated options
+        local Dropdown = Tab:CreateDropdown({
+            Name = "Select Pet To Farm",
+            Options = petOptions, -- Use the dynamically populated options
+            MultipleOptions = false,
+            Callback = function(Options)
+                -- The function that runs when the selected option changes
+                
+                petToEquipForFarming = table.concat(Options, ", ")
+                equipSelectedPet(petToEquipForFarming)
+            end,
+        })
+        
+        local Toggle = Tab:CreateToggle({
+            Name = "Pet/Baby Farm",
+            CurrentValue = false,
+            Flag = "Toggle1", 
+            Callback = function(Value)
+                getgenv().PetFarmGuiStarter = not getgenv().PetFarmGuiStarter
+            end,
+        })
+        
     end
-    
-    
-    -- Create the dropdown with the dynamically populated options
-    local Dropdown = Tab:CreateDropdown({
-        Name = "Select Pet To Farm",
-        Options = petOptions, -- Use the dynamically populated options
-        MultipleOptions = false,
-        Callback = function(Options)
-            -- The function that runs when the selected option changes
-            
-            petToEquipForFarming = table.concat(Options, ", ")
-            equipSelectedPet(petToEquipForFarming)
-        end,
-    })
-    
-    local Toggle = Tab:CreateToggle({
-        Name = "Pet/Baby Farm",
-        CurrentValue = false,
-        Flag = "Toggle1", 
-        Callback = function(Value)
-            getgenv().PetFarmGuiStarter = not getgenv().PetFarmGuiStarter
-        end,
-     })
-    
-    
-end
 
 
 
@@ -1635,8 +1630,7 @@ end
 
 
 
-local function FarmPet()
-    if not _G.ScriptRunning then
+    local function FarmPet()
         _G.ScriptRunning = true
         --print("FarmPet Now running!")
         local Players = game:GetService("Players")
@@ -1644,12 +1638,12 @@ local function FarmPet()
         local CoreGui = game:GetService("CoreGui")
         local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
-    
+
         local playButton = game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.EnclosingFrame.MainFrame.Contents.PlayButton
         local babyButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby
         local rbxProductButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Buttons.ButtonTemplate
         local claimButton = game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Frame.Body.Buttons.ClaimButton
-    
+
         local router
         for i, v in next, getgc(true) do
             if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
@@ -1661,17 +1655,17 @@ local function FarmPet()
         end
         -- Apply renaming to upvalues of the RouterClient.init function
         table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
-    
-    
+
+
         local object = game.ServerScriptService -- Replace this with the correct object path
-    
+
         game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
             if state == Enum.TeleportState.Started then
                 game:GetService("TeleportService"):Cancel()
             end
         end)
-    
-    
+
+
         task.wait(1)
         local xc = 0
         local NewAcc = false
@@ -1803,7 +1797,7 @@ local function FarmPet()
         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
         game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
         
-    
+
         -- Function to get current money value
         local function getCurrentMoney()
             local currentMoneyText = Player.PlayerGui.BucksIndicatorApp.CurrencyIndicator.Container.Amount.Text
@@ -1814,32 +1808,32 @@ local function FarmPet()
             end
             return currentMoney
         end
-    
+
         getgenv().userSetPetFarm = getgenv().PetFarm
-    
+
         task.wait(1)
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         local focusPetApp = Player.PlayerGui.FocusPetApp.Frame
         local ailments = focusPetApp.Ailments
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    
+
         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    
-    
+
+
         local virtualUser = game:GetService("VirtualUser")
-    
+
         Player.Idled:Connect(function()
             virtualUser:CaptureController()
             virtualUser:ClickButton2(Vector2.new())
         end)
-    
+
         -- ###########################################################################################################
-    
-    
+
+
         local function GetFurniture(furnitureName)
             local furnitureFolder = workspace.HouseInteriors.furniture
-    
+
             if furnitureFolder then
                 for _, child in pairs(furnitureFolder:GetChildren()) do
                     if child:IsA("Folder") then
@@ -1857,13 +1851,13 @@ local function FarmPet()
                 end
             end
         end
-    
+
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-    
-    
+
+
         -- ########################################################################################################################################################################
-    
-    
+
+
         local levelOfPet = 0
         local petToEquip
         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -1876,9 +1870,9 @@ local function FarmPet()
                 end
             end
         end
-    
+
         local petInv = fsys.get("equip_manager").pets[1] or nil
-    
+
         if petToEquip == nil then
             local args = {
                 [1] = "pets",
@@ -1890,7 +1884,7 @@ local function FarmPet()
             
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
         end
-    
+
         -- Check if pcall was successful
         local function equipPet()
             getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -1911,7 +1905,7 @@ local function FarmPet()
                 game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
             end
         end
-    
+
         -- Check if pcall was successful
         local function unequipPet()
             getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -1934,12 +1928,12 @@ local function FarmPet()
             end
         end
         -- ########################################################################################################################################################################
-    
+
         local function createPlatform()
                 local Player = game.Players.LocalPlayer
                 local character = Player.Character or Player.CharacterAdded:Wait()
                 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-    
+
                 -- Count existing platforms in the workspace
                 local existingPlatforms = 0
                 for _, object in pairs(workspace:GetChildren()) do
@@ -1947,25 +1941,25 @@ local function FarmPet()
                         existingPlatforms += 1
                     end
                 end
-    
+
                 -- Check if the number of platforms exceeds 5
                 if existingPlatforms >= 5 then
                     --print("Maximum number of platforms reached, skipping creation.")
                     return
                 end
-    
+
                 -- Create the platform part
                 local platform = Instance.new("Part")
                 platform.Name = "CustomPlatform" -- Unique name to identify the platform
                 platform.Size = Vector3.new(1100, 1, 1100) -- Size of the platform
                 platform.Anchored = true -- Make sure the platform doesn't fall
                 platform.CFrame = humanoidRootPart.CFrame * CFrame.new(0, -5, 0) -- Place 5 studs below the player
-    
+
                 -- Set part properties
                 platform.BrickColor = BrickColor.new("Bright yellow") -- You can change the color
                 platform.Parent = workspace -- Parent to the workspace so it's visible
         end
-    
+
         local function teleportToMainmap()
             local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
             local OrigThreadID = getthreadidentity()
@@ -1977,7 +1971,7 @@ local function FarmPet()
             })
             setidentity(OrigThreadID)
         end
-    
+
         local function teleportPlayerNeeds(x, y, z)
             local Player = game.Players.LocalPlayer
             if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
@@ -1986,20 +1980,20 @@ local function FarmPet()
                 --print("Player or character not found!")
             end
         end
-    
+
         local function BabyJump()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/BabyJump"):FireServer(fsys.get("char_wrapper")["char"])
         end
-    
-    
-    
+
+
+
         getgenv().BedID = GetFurniture("EggCrib")
         getgenv().ShowerID = GetFurniture("StylishShower")
         getgenv().PianoID = GetFurniture("Piano")
         getgenv().WaterID = GetFurniture("PetWaterBowl")
         getgenv().FoodID = GetFurniture("PetFoodBowl")
         getgenv().ToiletID = GetFurniture("Toilet")
-    
+
         -- Get current money
         local startingMoney = getCurrentMoney()
         local function buyItems()
@@ -2070,7 +2064,7 @@ local function FarmPet()
                 end
             end
         end
-    
+
         local function removeItemByValue(tbl, value)
             for i = 1, #tbl do
                 if tbl[i] == value then
@@ -2079,10 +2073,10 @@ local function FarmPet()
                 end
             end
         end
-    
-    
+
+
         -- ########################################################################################################################################################################
-    
+
         -- Define the new path
         -- local ailments_list = Player.PlayerGui:WaitForChild("ailments_list")
         equipPet()
@@ -2090,16 +2084,16 @@ local function FarmPet()
         local function get_mystery_task()
             local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-    
+
             for ailmentId, ailment in pairs(PetAilmentsData) do
                 for taskId, task in pairs(ailment) do
                     if task.kind == "mystery" and task.components and task.components.mystery then
                         local ailmentKey = task.components.mystery.ailment_key
                         local foundMystery = false
-    
+
                         for i = 1, 3 do
                             if foundMystery then break end
-    
+
                             wait(0.5)
                             pcall(function()
                                 local actions = {"hungry", "thirsty", "sleepy", "toilet", "bored", "dirty", "play", "school", "salon", "pizza_party", "sick", "camping", "beach_party", "walk", "ride"}
@@ -2110,14 +2104,14 @@ local function FarmPet()
                                         foundMystery = true
                                         break
                                     end
-    
+
                                     wait(0.5)
                                     local args = {
                                         [1] = ailmentKey,
                                         [2] = i,
                                         [3] = action
                                     }
-    
+
                                     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
                                 end
                             end)
@@ -2126,13 +2120,13 @@ local function FarmPet()
                 end
             end
         end
-    
+
         local PetAilmentsArray = {}
         local BabyAilmentsArray = {}
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
         local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
         local BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-    
+
         local function getAilments(tbl)
             PetAilmentsArray = {}
             for key, value in pairs(tbl) do
@@ -2144,13 +2138,13 @@ local function FarmPet()
                 end
             end
         end
-    
+
         Player.PlayerGui.TransitionsApp.Whiteout:GetPropertyChangedSignal("BackgroundTransparency"):Connect(function()
             if Player.PlayerGui.TransitionsApp.Whiteout.BackgroundTransparency == 0 then
                 Player.PlayerGui.TransitionsApp.Whiteout.BackgroundTransparency = 1
             end
         end)
-    
+
         local function getBabyAilments(tbl)
             BabyAilmentsArray = {}
             for key, value in pairs(tbl) do
@@ -2158,7 +2152,7 @@ local function FarmPet()
                 --print("Baby ailment: ", key)
             end
         end
-    
+
         -- Function to buy an item
         local function buyItem(itemName)
             local args = {
@@ -2168,7 +2162,7 @@ local function FarmPet()
             }
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
         end
-    
+
         -- Function to get the ID of a specific food item
         local function getFoodID(itemName)
             local ailmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
@@ -2179,7 +2173,7 @@ local function FarmPet()
             end
             return nil
         end
-    
+
         -- Function to use an item multiple times
         local function useItem(itemID, useCount)
             for i = 1, useCount do
@@ -2191,7 +2185,7 @@ local function FarmPet()
                 task.wait(0.1)
             end
         end
-    
+
         local function hasTargetAilment(targetKind)
             local ailments = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
             for _, ailment in pairs(ailments) do
@@ -2201,9 +2195,9 @@ local function FarmPet()
             end
             return false
         end
-    
-    
-    
+
+
+
         task.wait(1)
         -- ########################################################################################################################################################################
         local taskName = "none"
@@ -2265,34 +2259,34 @@ local function FarmPet()
                 --print("done thristy")
             end
         end
-    
-    
+
+
         local function EatDrinkSafeCall(isEquippedPet)
             local success = false
-    
+
             while not success do
                 success, err = pcall(function()
                     EatDrink(isEquippedPet)
                 end)
-    
+
                 if not success then
                     warn("Error occurred: ", err)
                     task.wait(1) -- wait for a second before retrying
                 end
             end
-    
+
             --print("EatDrink executed successfully without errors.")
         end
-    
-    
-    
-    
+
+
+
+
         -- ########################################################################################################################################################################
         for _, pet in ipairs(workspace.Pets:GetChildren()) do
             --print(pet.Name)
             petName = pet.Name
         end
-    
+
         _G.FarmTypeRunning = "none"
 
         -- EVENT #############################################
@@ -2314,7 +2308,7 @@ local function FarmPet()
             end
         end
         -- ##################################################
-    
+
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
@@ -2328,7 +2322,7 @@ local function FarmPet()
             createPlatform()
             equipPet()
             task.wait(1)
-    
+
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
             local character = player.Character or player.CharacterAdded:Wait()
@@ -2344,7 +2338,7 @@ local function FarmPet()
             if humanoid then
                 humanoid.PlatformStand = false -- Allow normal movement and physics
             end   
-    
+
             while getgenv().PetFarm do
                 _G.FarmTypeRunning = "Pet/Baby"
                 print("inside petfarm")
@@ -2361,7 +2355,7 @@ local function FarmPet()
                         EatDrinkSafeCall(true)
                     end
                     -- print("lapas sa hungry")
-    
+
                     -- Baby hungry
                     if table.find(BabyAilmentsArray, "hungry") then
                         -- Baby hungry
@@ -2391,7 +2385,7 @@ local function FarmPet()
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
                     end
-    
+
                     -- Baby sick
                     if table.find(BabyAilmentsArray, "sick") then
                         -- Baby sick
@@ -2429,7 +2423,7 @@ local function FarmPet()
                         equipPet()
                         --print("done sick")
                     end
-    
+
                     -- Check if 'school' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "school") or table.find(BabyAilmentsArray, "school") then
                         --print("going school")
@@ -2460,7 +2454,7 @@ local function FarmPet()
                         equipPet()
                         --print("done school")
                     end
-    
+
                     -- Check if 'salon' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
                         --print("going salon")
@@ -2778,7 +2772,7 @@ local function FarmPet()
                         -- potty
                         if getgenv().ToiletID then
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer,getgenv().ToiletID,"Seat1",{['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))},fsys.get("pet_char_wrappers")[1]["char"])
-    
+
                             repeat task.wait(1)
                             until not hasTargetAilment("toilet")
                             removeItemByValue(PetAilmentsArray, "toilet")
@@ -2945,21 +2939,21 @@ local function FarmPet()
                         local Character = Player.Character or Player.CharacterAdded:Wait()
                         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
                         local Humanoid = Character:WaitForChild("Humanoid") -- Get the humanoid
-    
+
                         -- Set the distance and duration for the walk
                         local walkDistance = 1000  -- Adjust the distance as needed
                         local walkDuration = 30    -- Adjust the time in seconds as needed
-    
+
                         -- Store the initial position to walk back to it later
                         local initialPosition = HumanoidRootPart.Position
-    
+
                         -- Define the goal position (straight ahead in the character's current direction)
                         local forwardPosition = initialPosition + (HumanoidRootPart.CFrame.LookVector * walkDistance)
-    
+
                         -- Calculate speed to match walkDuration
                         local walkSpeed = walkDistance / walkDuration
                         Humanoid.WalkSpeed = walkSpeed -- Temporarily set the humanoid's walk speed
-    
+
                         -- Move to the forward position and back twice
                         for i = 1, 2 do
                             -- Check if petfarm is true
@@ -3029,21 +3023,21 @@ local function FarmPet()
                         local Character = Player.Character or Player.CharacterAdded:Wait()
                         local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
                         local Humanoid = Character:WaitForChild("Humanoid") -- Get the humanoid
-    
+
                         -- Set the distance and duration for the walk
                         local walkDistance = 1000  -- Adjust the distance as needed
                         local walkDuration = 30    -- Adjust the time in seconds as needed
-    
+
                         -- Store the initial position to walk back to it later
                         local initialPosition = HumanoidRootPart.Position
-    
+
                         -- Define the goal position (straight ahead in the character's current direction)
                         local forwardPosition = initialPosition + (HumanoidRootPart.CFrame.LookVector * walkDistance)
-    
+
                         -- Calculate speed to match walkDuration
                         local walkSpeed = walkDistance / walkDuration
                         Humanoid.WalkSpeed = walkSpeed -- Temporarily set the humanoid's walk speed
-    
+
                         -- Move to the forward position and back twice
                         for i = 1, 2 do
                             -- Check if petfarm is true
@@ -3086,39 +3080,39 @@ local function FarmPet()
             end
             
         end
-    
+
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-    
+
         local RunService = game:GetService("RunService")
         local currentText
-    
-    
-    
+
+
+
         -- ###############################################################################################################################################
         -- TRACKER
         -- ###############################################################################################################################################
         -- Fetch required services and modules
         local Players = game:GetService("Players")
         local player = Players.LocalPlayer
-    
+
         -- Create a ScreenGui
         local screenGui = Instance.new("ScreenGui")
         screenGui.Name = "CustomGui"
         screenGui.Parent = player:WaitForChild("PlayerGui")
         screenGui.IgnoreGuiInset = true -- Ignore default GUI insets
-    
+
         -- Main background frame
         local frame = Instance.new("Frame")
         frame.Size = UDim2.new(1, 0, 1, 0) -- Fullscreen
         frame.Position = UDim2.new(0, 0, 0, 0)
         frame.BackgroundColor3 = Color3.fromHex("#514FDB") -- Purple background
         frame.Parent = screenGui
-    
-    
-    
-    
+
+
+
+
         -- Title Label
         local titleLabel = Instance.new("TextLabel")
         titleLabel.Size = UDim2.new(1, 0, 0.1, 0) -- Occupies 10% of the screen height
@@ -3133,8 +3127,8 @@ local function FarmPet()
         titleLabel.TextXAlignment = Enum.TextXAlignment.Center -- Center horizontally
         titleLabel.TextYAlignment = Enum.TextYAlignment.Center -- Center vertically
         titleLabel.Parent = frame
-    
-    
+
+
         -- Toggle Button (Next to HIRA X Title)
         local toggleButton = Instance.new("TextButton")
         toggleButton.Size = UDim2.new(0.1, 0, 0.05, 0) -- Adjust size to fit nicely
@@ -3145,32 +3139,32 @@ local function FarmPet()
         toggleButton.Font = Enum.Font.SourceSansBold
         toggleButton.TextScaled = true -- Scale text to fit the button
         toggleButton.Parent = screenGui
-    
+
         -- Variable to track GUI state
         local isGuiVisible = true
-    
+
         -- Function to toggle GUI visibility
         local function toggleGui()
             isGuiVisible = not isGuiVisible
             frame.Visible = isGuiVisible
             toggleButton.Text = isGuiVisible and "😎" or "🙂"
         end
-    
+
         -- Connect button click to toggle function
         toggleButton.MouseButton1Click:Connect(toggleGui)
-    
+
         -- Ensure the GUI is initially visible
         frame.Visible = isGuiVisible
-    
-    
+
+
         -- Stats Container
         local statsContainer = Instance.new("Frame")
         statsContainer.Size = UDim2.new(0.8, 0, 0.3, 0) -- 80% width, 60% height
         statsContainer.Position = UDim2.new(0.35, 0, 0.35, 0) -- Centered horizontally and slightly below title
         statsContainer.BackgroundTransparency = 1 -- Transparent background
         statsContainer.Parent = frame
-    
-    
+
+
         -- Function to smoothly transition through RGB colors
         local function RGBCycle(textLabel)
             local t = 0 -- Time variable for smooth transitions
@@ -3179,16 +3173,16 @@ local function FarmPet()
                 local r = math.sin(t) * 127 + 128
                 local g = math.sin(t + 2) * 127 + 128
                 local b = math.sin(t + 4) * 127 + 128
-    
+
                 -- Set the TextColor3 property
                 textLabel.TextColor3 = Color3.fromRGB(r, g, b)
-    
+
                 -- Increment the time variable for smooth transitions
                 t = t + 0.05
                 task.wait(0.05) -- Adjust the speed of the color cycle
             end
         end
-    
+
         -- Function to create a stat row
         local function createStatRow(parent, labelText, order)
             local row = Instance.new("Frame")
@@ -3196,7 +3190,7 @@ local function FarmPet()
             row.Position = UDim2.new(0, 0, (order - 1) * 0.2, 0) -- Stack rows vertically
             row.BackgroundTransparency = 1
             row.Parent = parent
-    
+
             -- Label for stat name
             local label = Instance.new("TextLabel")
             label.Size = UDim2.new(0.4, 0, 1, 0) -- Label occupies 40% of row width
@@ -3211,7 +3205,7 @@ local function FarmPet()
             label.TextXAlignment = Enum.TextXAlignment.Left -- Align left
             label.TextYAlignment = Enum.TextYAlignment.Center -- Center vertically
             label.Parent = row
-    
+
             -- Label for stat value
             local value = Instance.new("TextLabel")
             value.Size = UDim2.new(0.6, 0, 1, 0) -- Value occupies 60% of row width
@@ -3226,10 +3220,10 @@ local function FarmPet()
             value.TextXAlignment = Enum.TextXAlignment.Right -- Align right
             value.TextYAlignment = Enum.TextYAlignment.Center -- Center vertically
             value.Parent = row
-    
+
             return value
         end
-    
+
         -- Create rows for stats
         local moneyValue = createStatRow(statsContainer, "MONEY:", 1)
         local potionValue = createStatRow(statsContainer, "POTION:", 2)
@@ -3243,7 +3237,7 @@ local function FarmPet()
             petToEquipName = petWrappers[1]["char"]
         end
         print(petToEquipName)
-    
+
         -- Function to format elapsed time
         local function formatTime(seconds)
             local hours = math.floor(seconds / 3600)
@@ -3251,21 +3245,21 @@ local function FarmPet()
             local secondsLeft = seconds % 60
             return string.format("%02d:%02d:%02d", hours, minutes, secondsLeft)
         end
-    
-    
-    
-    
+
+
+
+
         -- Initialize values
         local initialMoney = getCurrentMoney()
         local initialPotion = 0
         local startTime = os.time()
-    
+
         for _, v in pairs(fsys.get("inventory").food) do
             if v.id == "pet_age_potion" then
                 initialPotion = initialPotion + 1
             end
         end
-    
+
         -- Function to update stats dynamically
         local function updateStats()
             -- Get current money and potion counts
@@ -3278,15 +3272,15 @@ local function FarmPet()
                     currentPotionCount = currentPotionCount + 1
                 end
             end
-    
+
             -- Calculate changes
             local moneyChange = currentMoney - initialMoney
             local potionChange = currentPotionCount - initialPotion
             local elapsedTime = os.time() - startTime
-    
+
             -- Format elapsed time
             local formattedTime = formatTime(elapsedTime)
-    
+
             -- Dynamic updates for stats
             moneyValue.Text = tostring(currentMoney) .. " (+" .. tostring(moneyChange) .. ")"
             potionValue.Text = tostring(currentPotionCount) .. " (+" .. tostring(potionChange) .. ")"
@@ -3295,11 +3289,11 @@ local function FarmPet()
             petValue.Text = tostring(petToEquipName or "None") -- Ensure `petToEquipName` is set elsewhere in your script
             farmType.Text = _G.FarmTypeRunning
         end
-    
+
         -- Initial update and periodic refresh
         updateStats()
-    
-    
+
+
         -- Function to continuously update UI
         local function startUIUpdate()
             while true do
@@ -3307,12 +3301,12 @@ local function FarmPet()
                 task.wait(1) -- Adjust the wait time as needed (e.g., every 1 second)
             end
         end
-    
+
         local UserInputService = game:GetService("UserInputService")
-    
+
         -- Variable to track the transparency state
         local isTransparent = false
-    
+
         -- Function to handle key press
         local function onKeyPress(input, gameProcessedEvent)
             if not gameProcessedEvent then
@@ -3330,7 +3324,7 @@ local function FarmPet()
         end
         -- Connect the function to UserInputService
         UserInputService.InputBegan:Connect(onKeyPress)
-    
+
         task.wait(10)
         task.spawn(startPetFarm)
         task.wait(1)
@@ -3339,19 +3333,19 @@ local function FarmPet()
         task.spawn(function()
             RGBCycle(titleLabel)
         end)
-    else
-        print("Script already running")
     end
-end
 
-if getgenv().PetFarm then
-    getgenv().PetFarmGuiStarter = false
-    FarmPet()
-    return
-end
+    if getgenv().PetFarm then
+        getgenv().PetFarmGuiStarter = false
+        FarmPet()
+        return
+    end
 
-if getgenv().PetFarmGui then
-    getgenv().FarmPet = false
-    FarmPetGui()
-    return
+    if getgenv().PetFarmGui then
+        getgenv().FarmPet = false
+        FarmPetGui()
+        return
+    end
+else
+    print("Script already running")
 end
