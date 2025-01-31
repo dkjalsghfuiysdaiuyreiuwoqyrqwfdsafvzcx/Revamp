@@ -1,6 +1,7 @@
 if not _G.ScriptRunning then
-    -- hotdogs
-    -- Fixed loop
+    -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
+    -- Currrent version FarmPet105e.lua
+    -- Added pet me task
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -1271,6 +1272,53 @@ if not _G.ScriptRunning then
                             equipPet()
                             --print("done potty")
                         end  
+                        -- Check if 'pet me' is in the PetAilmentsArray
+                        if table.find(PetAilmentsArray, "pet_me") and not getgenv().SkipPetMe then
+                            --print("going pet me")
+                            taskName = "👋"
+                            equipPet()
+                            task.wait(3)
+                            -- pet me task
+                            -- Loop through all `ailments_list` in PlayerGui
+                            local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
+                            for _, ailmentsList in pairs(playerGui:GetChildren()) do
+                                if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
+                                    local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
+                                    if container and container ~= "UIListLayout" then
+                                        for _, button in pairs(container:GetChildren()) do
+                                            FireSig(button) -- Click each ailment button
+                                            task.wait(3) -- Optional delay between clicks
+                                            if game:GetService("Players").LocalPlayer.PlayerGui.FocusPetApp.BackButton.Visible then
+                                                -- Handle the API call after interacting with all ailments
+                                                print("inside focus")
+                                                local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+
+                                                local args = {
+                                                    [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
+                                                }
+                                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ProgressPetMeAilment"):FireServer(unpack(args))
+
+                                                task.wait(1) -- Optional delay between clicks
+                                                -- Click the back button
+                                                local backButton = playerGui.FocusPetApp.BackButton
+                                                FireSig(backButton)
+                                                break
+                                            else
+                                                print("no back button found")
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                            repeat task.wait(1)
+                            until not hasTargetAilment("pet_me")
+                            removeItemByValue(PetAilmentsArray, "pet_me")
+                            PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                            getAilments(PetAilmentsData)
+                            taskName = "none"
+                            equipPet()
+                            --print("done mysteryTask")
+                        end
                         -- Check if 'mysteryTask' is in the PetAilmentsArray
                         if table.find(PetAilmentsArray, "mystery") then
                             --print("going mysteryTask")
@@ -2813,7 +2861,7 @@ if not _G.ScriptRunning then
                         --print("done mysteryTask")
                     end 
                     -- Check if 'pet me' is in the PetAilmentsArray
-                    if table.find(PetAilmentsArray, "pet_me") then
+                    if table.find(PetAilmentsArray, "pet_me") and not getgenv().SkipPetMe then
                         --print("going pet me")
                         taskName = "👋"
                         equipPet()
