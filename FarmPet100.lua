@@ -1,6 +1,7 @@
 if not _G.ScriptRunning then
     -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
-    -- fixed 1:06 am
+    -- Currrent version FarmPet105e.lua
+    -- Added pet me task
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -2399,7 +2400,7 @@ if not _G.ScriptRunning then
             task.wait(1)
             task.spawn(function()
                 -- EVENT #############################################
-                local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
+                local maps = { "MainMap", "LNY2025GlitchZone", "MoonInterior" } -- List of map names
                 local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
                 
                 for _, mapName in ipairs(maps) do
