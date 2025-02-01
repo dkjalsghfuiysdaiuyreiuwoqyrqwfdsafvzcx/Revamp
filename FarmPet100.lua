@@ -142,85 +142,75 @@ if not _G.ScriptRunning then
             end
         end)
 
-
-        if Cash <= 125 then
-            if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
-                for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
-                    xc = xc + 1
-                    if v.id == "trade_license" then
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
-                        HasTradeLic = true
-                    end
-                end
-            else
-                if not HasTradeLic then
-                    NewAcc = true
+        local NewAcc = false
+        local HasTradeLic = false
+        if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
+            for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
+                if v.id == "trade_license" then
+                    print("has trade lic")
+                    HasTradeLic = true
                 end
             end
         end
-        
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+
+        if Cash <= 125 and not HasTradeLic then
+            print("New account")
+            print("Inside new account")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
+            game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+            while not HasTradeLic do
+                print("no trade lic")
+                if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
+                    fsys = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
+                    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                    fsys("RouterClient").get("SettingsAPI/SetBooleanFlag"):FireServer("has_talked_to_trade_quest_npc", true)
+                    task.wait()
+                    fsys("RouterClient").get("TradeAPI/BeginQuiz"):FireServer()
+                    task.wait(1)
+                    for i, v in pairs(fsys('ClientData').get("trade_license_quiz_manager")["quiz"]) do
+                            fsys("RouterClient").get("TradeAPI/AnswerQuizQuestion"):FireServer(v["answer"])
+                        task.wait()
+                    end
+                    for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
+                        if v.id == "trade_license" then
+                            print("have trade lic")
+                            HasTradeLic = true
+                        end
+                    end
+                end
+                task.wait(0.4)
+            end
+            Player:Kick("Tutorial completed please restart game!")
+        end
         
 
         -- Function to get current money value
@@ -1704,14 +1694,8 @@ if not _G.ScriptRunning then
         -- Apply renaming to upvalues of the RouterClient.init function
         table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
 
+        --print("After dehash")
 
-        local object = game.ServerScriptService -- Replace this with the correct object path
-
-        game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
-            if state == Enum.TeleportState.Started then
-                game:GetService("TeleportService"):Cancel()
-            end
-        end)
 
 
         task.wait(1)
@@ -1763,88 +1747,79 @@ if not _G.ScriptRunning then
                 end
             end
         end)
+        --print("After runservice")
 
-
-        if Cash <= 125 then
-            if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
-                for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
-                    xc = xc + 1
-                    if v.id == "trade_license" then
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
-                        HasTradeLic = true
-                    end
-                end
-            else
-                if not HasTradeLic then
-                    NewAcc = true
+        local NewAcc = false
+        local HasTradeLic = false
+        if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
+            for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
+                if v.id == "trade_license" then
+                    print("has trade lic")
+                    HasTradeLic = true
                 end
             end
         end
 
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-        game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
-        game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+        if Cash <= 125 and not HasTradeLic then
+            print("New account")
+            --print("Inside new account")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("npc_interaction")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ChoosePet"):FireServer("cat")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(2, {["chosen_pet"] = "cat"})
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(3, {["named_pet"] = false})
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnTutorialAilment"):FireServer("pet_me")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("focused_pet")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_pet_me_ailment")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(4)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(5)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/SpawnPetTreat"):FireServer()
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportDiscreteStep"):FireServer("selected_hungry_ailment")
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(6)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(7)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(8)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/ReportStepCompleted"):FireServer(9)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetSetting"):FireServer("theme_color","blue")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Tutorial Started")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Opened")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("AvatarAPI/SetGender"):FireServer("male")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Avatar Editor Closed")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Tutorial Started")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Housing Editor Opened")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_entered",{["house_type"] = "mine"})
+            game:GetService("ReplicatedStorage").API:FindFirstChild("HousingAPI/SendHousingOnePointOneLog"):FireServer("edit_state_exited",{})
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
+            game:GetService("ReplicatedStorage").API:FindFirstChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("House Exited")
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_twitter_prompt",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("showed_youtube_prompt",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("roblox_classic_event_dialog_shown",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v2_completed",true)
+            game:GetService("ReplicatedStorage").API:FindFirstChild("SettingsAPI/SetBooleanFlag"):FireServer("tutorial_v3_completed",true)
+            while not HasTradeLic do
+                print("no trade lic")
+                if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
+                    fsys = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
+                    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                    fsys("RouterClient").get("SettingsAPI/SetBooleanFlag"):FireServer("has_talked_to_trade_quest_npc", true)
+                    task.wait()
+                    fsys("RouterClient").get("TradeAPI/BeginQuiz"):FireServer()
+                    task.wait(1)
+                    for i, v in pairs(fsys('ClientData').get("trade_license_quiz_manager")["quiz"]) do
+                            fsys("RouterClient").get("TradeAPI/AnswerQuizQuestion"):FireServer(v["answer"])
+                        task.wait()
+                    end
+                    for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
+                        if v.id == "trade_license" then
+                            print("have trade lic")
+                            HasTradeLic = true
+                        end
+                    end
+                end
+                task.wait(0.4)
+            end
+            Player:Kick("Tutorial completed please restart game!")
+        end
         
+        --print("After check new account")
 
         -- Function to get current money value
         local function getCurrentMoney()
@@ -1902,22 +1877,66 @@ if not _G.ScriptRunning then
 
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
 
-
+        --print("After get furniture")
         -- ########################################################################################################################################################################
 
 
-        local levelOfPet = 0
-        local petToEquip
+        local highestLegendaryLevel = 0
+        local highestOtherLevel = 0
+        local petToEquip = nil
+        local checkedPets = {} -- Store checked pet kinds
+
+        local function CheckRarity(petname)
+            -- Skip if we've already checked this pet
+            if checkedPets[petname] then
+                return checkedPets[petname] -- Return cached result
+            end
+
+            for _, z in pairs(game:GetService("ReplicatedStorage").SharedModules.ContentPacks:GetChildren()) do 
+                if z:IsA("Folder") and z:FindFirstChild("InventorySubDB") and z.InventorySubDB:FindFirstChild("Pets") then 
+                    for _, Pet in pairs(require(z.InventorySubDB.Pets)) do 
+                        for _, b in pairs(Pet) do
+                            if tostring(b) == petname then
+                                checkedPets[petname] = Pet.rarity or "Unknown" -- Cache the result
+                                return checkedPets[petname]
+                            end
+                        end
+                    end
+                end
+            end
+
+            checkedPets[petname] = "Not Found" -- Cache missing pets too
+            return "Not Found"
+        end
+        --print("After check rarity")
+        -- Get player pets
         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-        for i, v in pairs(fsys.get("inventory").pets) do
-            if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
-                levelOfPet = v.properties.age
-                petToEquip = v.unique
-                if levelOfPet >= 6 then
-                    break
+
+        for _, v in pairs(fsys.get("inventory").pets) do
+            local rarity = CheckRarity(v.kind) -- Get pet rarity
+            local petLevel = v.properties.age -- Get pet level
+
+            if v.kind ~= "practice_dog" then -- Ignore practice_dog
+                if rarity:lower() == "legendary" then
+                    -- Prioritize the highest-level legendary pet
+                    if petLevel > highestLegendaryLevel then
+                        highestLegendaryLevel = petLevel
+                        petToEquip = v.unique
+                    end
+                else
+                    -- Store highest level non-legendary pet as backup
+                    if petLevel > highestOtherLevel then
+                        highestOtherLevel = petLevel
+                        if not petToEquip then -- Only set if no legendary was found
+                            petToEquip = v.unique
+                        end
+                    end
                 end
             end
         end
+
+        --print("Pet to equip:", petToEquip) -- Output the selected pet
+
 
         local petInv = fsys.get("equip_manager").pets[1] or nil
 
@@ -1975,6 +1994,8 @@ if not _G.ScriptRunning then
             
             end
         end
+
+        --print("After equip unequip")
         -- ########################################################################################################################################################################
 
         local function createPlatform()
@@ -2033,7 +2054,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/BabyJump"):FireServer(fsys.get("char_wrapper")["char"])
         end
 
-
+        --print("After teleports")
 
         getgenv().BedID = GetFurniture("EggCrib")
         getgenv().ShowerID = GetFurniture("StylishShower")
@@ -2121,7 +2142,7 @@ if not _G.ScriptRunning then
                 end
             end
         end
-
+        --print("After buy")
 
         -- ########################################################################################################################################################################
 
@@ -2200,7 +2221,7 @@ if not _G.ScriptRunning then
                 --print("Baby ailment: ", key)
             end
         end
-
+        --print("After get ailments")
         -- Function to buy an item
         local function buyItem(itemName)
             local args = {
@@ -2336,27 +2357,7 @@ if not _G.ScriptRunning then
         end
 
         _G.FarmTypeRunning = "none"
-
-        -- EVENT #############################################
-        local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
-        local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
-        
-        for _, mapName in ipairs(maps) do
-            for i = 1, 500 do
-                local args = {
-                    [1] = mapName,
-                    [2] = tostring(i) -- Second argument is the current number from 1 to 100
-                }
-                
-                -- Fire the server with the arguments
-                apiPath:FireServer(unpack(args))
-                
-                -- Optional: Add a small delay to prevent overwhelming the server
-                wait(0.1)
-            end
-        end
-        -- ##################################################
-
+        print("After taas startpetfarm")
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
@@ -2370,6 +2371,28 @@ if not _G.ScriptRunning then
             createPlatform()
             equipPet()
             task.wait(1)
+            task.spawn(function()
+                -- EVENT #############################################
+                local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
+                local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
+                
+                for _, mapName in ipairs(maps) do
+                    for i = 1, 999 do
+                        local args = {
+                            [1] = mapName,
+                            [2] = tostring(i), -- Second argument is the current number from 1 to 100
+                            [3] = true
+                        }
+                        
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args))
+                        
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+                    end
+                end
+                -- ##################################################
+            end)
 
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
@@ -3128,7 +3151,7 @@ if not _G.ScriptRunning then
             end
             
         end
-
+        --print("After startpetfarm")
         local Players = game:GetService("Players")
         local Player = Players.LocalPlayer
         getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
@@ -3280,11 +3303,11 @@ if not _G.ScriptRunning then
         local petValue = createStatRow(statsContainer, "PET:", 5)
         local farmType = createStatRow(statsContainer, "Farm Type:", 6)
         local petWrappers = fsys.get("pet_char_wrappers") -- Get the pet wrappers
-        local petToEquipName = "Loading..."
+        getgenv().petToEquipName = "Loading..."
         if petWrappers and petWrappers[1] and petWrappers[1]["char"] then
-            petToEquipName = petWrappers[1]["char"]
+            getgenv().petToEquipName = petWrappers[1]["char"]
         end
-        print(petToEquipName)
+        --print(getgenv().petToEquipName)
 
         -- Function to format elapsed time
         local function formatTime(seconds)
@@ -3334,7 +3357,7 @@ if not _G.ScriptRunning then
             potionValue.Text = tostring(currentPotionCount) .. " (+" .. tostring(potionChange) .. ")"
             timeValue.Text = formattedTime
             taskValue.Text = tostring(taskName or "None")
-            petValue.Text = tostring(petToEquipName or "None") -- Ensure `petToEquipName` is set elsewhere in your script
+            petValue.Text = tostring(getgenv().petToEquipName or "None") -- Ensure `getgenv().petToEquipName` is set elsewhere in your script
             farmType.Text = _G.FarmTypeRunning
         end
 
@@ -3346,6 +3369,11 @@ if not _G.ScriptRunning then
         local function startUIUpdate()
             while true do
                 updateStats()
+                local petWrappers = fsys.get("pet_char_wrappers") -- Get the pet wrappers
+                getgenv().petToEquipName = "Loading..."
+                if petWrappers and petWrappers[1] and petWrappers[1]["char"] then
+                    getgenv().petToEquipName = petWrappers[1]["char"]
+                end
                 task.wait(1) -- Adjust the wait time as needed (e.g., every 1 second)
             end
         end
@@ -3372,7 +3400,7 @@ if not _G.ScriptRunning then
         end
         -- Connect the function to UserInputService
         UserInputService.InputBegan:Connect(onKeyPress)
-
+        -- print("After tracker")
         task.wait(10)
         task.spawn(startPetFarm)
         task.wait(1)
