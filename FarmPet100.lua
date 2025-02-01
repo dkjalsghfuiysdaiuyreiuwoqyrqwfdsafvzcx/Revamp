@@ -1,6 +1,6 @@
 if not _G.ScriptRunning then
     -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
-    -- Added 999 new star faster start
+    -- remove stack overflow
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -2317,28 +2317,7 @@ if not _G.ScriptRunning then
 
         _G.FarmTypeRunning = "none"
 
-        task.spawn(function()
-            -- EVENT #############################################
-            local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
-            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
-            
-            for _, mapName in ipairs(maps) do
-                for i = 1, 999 do
-                    local args = {
-                        [1] = mapName,
-                        [2] = tostring(i), -- Second argument is the current number from 1 to 100
-                        [3] = true
-                    }
-                    
-                    -- Fire the server with the arguments
-                    apiPath:FireServer(unpack(args))
-                    
-                    -- Optional: Add a small delay to prevent overwhelming the server
-                    wait(0.1)
-                end
-            end
-            -- ##################################################
-        end)
+
 
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
@@ -2353,6 +2332,27 @@ if not _G.ScriptRunning then
             createPlatform()
             equipPet()
             task.wait(1)
+            
+            -- EVENT #############################################
+            local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
+            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
+            
+            for _, mapName in ipairs(maps) do
+                for i = 1, 500 do
+                    local args = {
+                        [1] = mapName,
+                        [2] = tostring(i), -- Second argument is the current number from 1 to 100
+                        [3] = true
+                    }
+                    
+                    -- Fire the server with the arguments
+                    apiPath:FireServer(unpack(args))
+                    
+                    -- Optional: Add a small delay to prevent overwhelming the server
+                    wait(0.1)
+                end
+            end
+            -- ##################################################
 
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
