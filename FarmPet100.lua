@@ -1,7 +1,6 @@
 if not _G.ScriptRunning then
     -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
-    -- Currrent version FarmPet105e.lua
-    -- Added pet me task
+    -- fixed 1:06 am
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -1883,6 +1882,7 @@ if not _G.ScriptRunning then
 
         local highestLegendaryLevel = 0
         local highestOtherLevel = 0
+        local levelOfPet = 0
         local petToEquip = nil
         local checkedPets = {} -- Store checked pet kinds
 
@@ -1956,12 +1956,25 @@ if not _G.ScriptRunning then
         local function equipPet()
             getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             if fsys.get("equip_manager").pets[1] and fsys.get("equip_manager").pets[1].unique and petToEquip ~= fsys.get("equip_manager").pets[1].unique then
-                for i, v in pairs(fsys.get("inventory").pets) do
-                    if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
-                        levelOfPet = v.properties.age
-                        petToEquip = v.unique
-                        if levelOfPet >= 6 then
-                            break
+                for _, v in pairs(fsys.get("inventory").pets) do
+                    local rarity = CheckRarity(v.kind) -- Get pet rarity
+                    local petLevel = v.properties.age -- Get pet level
+        
+                    if v.kind ~= "practice_dog" then -- Ignore practice_dog
+                        if rarity:lower() == "legendary" then
+                            -- Prioritize the highest-level legendary pet
+                            if petLevel > highestLegendaryLevel then
+                                highestLegendaryLevel = petLevel
+                                petToEquip = v.unique
+                            end
+                        else
+                            -- Store highest level non-legendary pet as backup
+                            if petLevel > highestOtherLevel then
+                                highestOtherLevel = petLevel
+                                if not petToEquip then -- Only set if no legendary was found
+                                    petToEquip = v.unique
+                                end
+                            end
                         end
                     end
                 end
@@ -1977,12 +1990,25 @@ if not _G.ScriptRunning then
         local function unequipPet()
             getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             if fsys.get("equip_manager").pets[1] and fsys.get("equip_manager").pets[1].unique and petToEquip ~= fsys.get("equip_manager").pets[1].unique then
-                for i, v in pairs(fsys.get("inventory").pets) do
-                    if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
-                        levelOfPet = v.properties.age
-                        petToEquip = v.unique
-                        if levelOfPet >= 6 then
-                            break
+                for _, v in pairs(fsys.get("inventory").pets) do
+                    local rarity = CheckRarity(v.kind) -- Get pet rarity
+                    local petLevel = v.properties.age -- Get pet level
+        
+                    if v.kind ~= "practice_dog" then -- Ignore practice_dog
+                        if rarity:lower() == "legendary" then
+                            -- Prioritize the highest-level legendary pet
+                            if petLevel > highestLegendaryLevel then
+                                highestLegendaryLevel = petLevel
+                                petToEquip = v.unique
+                            end
+                        else
+                            -- Store highest level non-legendary pet as backup
+                            if petLevel > highestOtherLevel then
+                                highestOtherLevel = petLevel
+                                if not petToEquip then -- Only set if no legendary was found
+                                    petToEquip = v.unique
+                                end
+                            end
                         end
                     end
                 end
