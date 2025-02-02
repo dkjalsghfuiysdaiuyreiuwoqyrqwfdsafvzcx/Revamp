@@ -1,5 +1,5 @@
 if not _G.ScriptRunning then
-    -- fixed stars 1011110%
+    -- Moon Task v3
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -945,6 +945,23 @@ if not _G.ScriptRunning then
                             --print("done school")
                         end
         
+                        if table.find(PetAilmentsArray, "moon") then
+                            print("going to the moon, roadtrip")
+                            taskName = "🌙"
+                            getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                            equipPet()
+                            task.wait(3)
+                            game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
+                            repeat task.wait(1)
+                            until not hasTargetAilment("moon")
+                            removeItemByValue(PetAilmentsArray, "moon")
+                            PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                            getAilments(PetAilmentsData)
+                            taskName = "none"
+                            equipPet()
+                            --print("done mysteryTask")
+                        end 
+
                         -- Check if 'salon' is in the PetAilmentsArray
                         if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
                             --print("going salon")
@@ -1477,10 +1494,11 @@ if not _G.ScriptRunning then
                             equipPet()
                             --print("done walk")
                         end  
+                        
                         -- Check if 'ride' is in the PetAilmentsArray
                         if table.find(PetAilmentsArray, "ride") then
                             -- Check if petfarm is true
-                            if not getgenv().PetFarmGuiStarter then
+                            if not getgenv().PetFarm then
                                 return -- Exit the function or stop the process if petfarm is false
                             end
                             --print("going ride")
@@ -1503,6 +1521,7 @@ if not _G.ScriptRunning then
                                 }
                             }
                             
+                            
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(unpack(args))         
                             
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/UseStroller"):InvokeServer(fsys.get("pet_char_wrappers")[1]["char"], game:GetService("Players").LocalPlayer.Character.StrollerTool.ModelHandle.TouchToSits.TouchToSit)
@@ -1513,32 +1532,32 @@ if not _G.ScriptRunning then
                             local Character = Player.Character or Player.CharacterAdded:Wait()
                             local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
                             local Humanoid = Character:WaitForChild("Humanoid") -- Get the humanoid
-        
+
                             -- Set the distance and duration for the walk
                             local walkDistance = 1000  -- Adjust the distance as needed
                             local walkDuration = 30    -- Adjust the time in seconds as needed
-        
+
                             -- Store the initial position to walk back to it later
                             local initialPosition = HumanoidRootPart.Position
-        
+
                             -- Define the goal position (straight ahead in the character's current direction)
                             local forwardPosition = initialPosition + (HumanoidRootPart.CFrame.LookVector * walkDistance)
-        
+
                             -- Calculate speed to match walkDuration
                             local walkSpeed = walkDistance / walkDuration
                             Humanoid.WalkSpeed = walkSpeed -- Temporarily set the humanoid's walk speed
-        
+
                             -- Move to the forward position and back twice
                             for i = 1, 2 do
                                 -- Check if petfarm is true
-                                if not getgenv().PetFarmGuiStarter then
+                                if not getgenv().PetFarm then
                                     return -- Exit the function or stop the process if petfarm is false
                                 end
                                 Humanoid:MoveTo(forwardPosition)
                                 Humanoid.MoveToFinished:Wait() -- Wait until the humanoid reaches the target
                                 task.wait(1) -- Optional pause after reaching the position
                                 -- Check if petfarm is true
-                                if not getgenv().PetFarmGuiStarter then
+                                if not getgenv().PetFarm then
                                     return -- Exit the function or stop the process if petfarm is false
                                 end
                                 Humanoid:MoveTo(initialPosition)
@@ -1547,11 +1566,21 @@ if not _G.ScriptRunning then
                             end
                             repeat
                                 -- Check if petfarm is true
-                                if not getgenv().PetFarmGuiStarter then
+                                if not getgenv().PetFarm then
                                     return -- Exit the function or stop the process if petfarm is false
                                 end
                                 task.wait(1)
                             until not hasTargetAilment("ride")
+                            local args = {
+                                [1] = strollerUnique,
+                                [2] = {
+                                    ["use_sound_delay"] = true,
+                                    ["equip_as_last"] = false
+                                }
+                            }
+                            
+                            
+                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(unpack(args))  
                             -- Reset to default walk speed
                             Humanoid.WalkSpeed = 16
                             removeItemByValue(PetAilmentsArray, "ride")
@@ -1564,7 +1593,7 @@ if not _G.ScriptRunning then
                             taskName = "none"
                             equipPet()
                             --print("done ride")
-                        end            
+                        end         
                         
                     until not getgenv().PetFarmGuiStarter
                 end
@@ -2618,6 +2647,24 @@ if not _G.ScriptRunning then
                         --print("done school")
                     end
 
+
+                    if table.find(PetAilmentsArray, "moon") then
+                        print("going to the moon, roadtrip")
+                        taskName = "🌙"
+                        getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                        equipPet()
+                        task.wait(3)
+                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
+                        repeat task.wait(1)
+                        until not hasTargetAilment("moon")
+                        removeItemByValue(PetAilmentsArray, "moon")
+                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                        getAilments(PetAilmentsData)
+                        taskName = "none"
+                        equipPet()
+                        --print("done mysteryTask")
+                    end 
+
                     -- Check if 'salon' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
                         --print("going salon")
@@ -3176,6 +3223,7 @@ if not _G.ScriptRunning then
                             }
                         }
                         
+                        
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(unpack(args))         
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/UseStroller"):InvokeServer(fsys.get("pet_char_wrappers")[1]["char"], game:GetService("Players").LocalPlayer.Character.StrollerTool.ModelHandle.TouchToSits.TouchToSit)
@@ -3225,6 +3273,16 @@ if not _G.ScriptRunning then
                             end
                             task.wait(1)
                         until not hasTargetAilment("ride")
+                        local args = {
+                            [1] = strollerUnique,
+                            [2] = {
+                                ["use_sound_delay"] = true,
+                                ["equip_as_last"] = false
+                            }
+                        }
+                        
+                        
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(unpack(args))  
                         -- Reset to default walk speed
                         Humanoid.WalkSpeed = 16
                         removeItemByValue(PetAilmentsArray, "ride")
