@@ -1,4 +1,5 @@
 -- Egg Farm hotdogs v4.3
+-- FIXED STARS
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -780,6 +781,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
             createPlatform()
             equipPet()
             task.wait(1)
+            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
             task.spawn(function()
                 -- EVENT for MainMap #############################################
                 for i = 1, 999 do
