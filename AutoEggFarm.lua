@@ -1,5 +1,4 @@
 -- Egg Farm hotdogs v4.3
--- FIXED STARS
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -781,64 +780,71 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
             createPlatform()
             equipPet()
             task.wait(1)
-            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
-            task.spawn(function()
-                -- EVENT for MainMap #############################################
-                for i = 1, 999 do
-                    local args = {
-                        [1] = "MainMap",
-                        [2] = tostring(i) -- Convert the number to a string
-                    }
-                    
-                    -- Fire the server with the arguments
-                    apiPath:FireServer(unpack(args))
-                    
-                    -- Optional: Add a small delay to prevent overwhelming the server
-                    wait(0.1)
 
-                    local args = {
-                        [1] = "MainMap",
-                        [2] = tostring(i), -- Convert the number to a string
-                        [3] = true
-                    }
-                    
-                    -- Fire the server with the arguments
-                    apiPath:FireServer(unpack(args))
-                    
-                    -- Optional: Add a small delay to prevent overwhelming the server
-                    wait(0.1)
+            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
+
+            task.spawn(function()
+                for run = 1, 20 do -- Repeat 20 times
+                    -- EVENT for MainMap #############################################
+                    for i = 1, 499 do
+                        local args1 = {
+                            [1] = "MainMap",
+                            [2] = tostring(i) -- Convert the number to a string
+                        }
+            
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args1))
+            
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+            
+                        local args2 = {
+                            [1] = "MainMap",
+                            [2] = tostring(i), -- Convert the number to a string
+                            [3] = true
+                        }
+            
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args2))
+            
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+                    end
                 end
                 -- ##################################################
             end)
             
             task.spawn(function()
-                -- EVENT for MoonInterior #############################################
-                for i = 1, 999 do
-                    local args = {
-                        [1] = "MoonInterior",
-                        [2] = tostring(i) -- Convert the number to a string
-                    }
-                    
-                    -- Fire the server with the arguments
-                    apiPath:FireServer(unpack(args))
-                    
-                    -- Optional: Add a small delay to prevent overwhelming the server
-                    wait(0.1)
-
-                    local args = {
-                        [1] = "MoonInterior",
-                        [2] = tostring(i), -- Convert the number to a string
-                        [3] = true
-                    }
-                    
-                    -- Fire the server with the arguments
-                    apiPath:FireServer(unpack(args))
-                    
-                    -- Optional: Add a small delay to prevent overwhelming the server
-                    wait(0.1)
+                for run = 1, 20 do -- Repeat 20 times
+                    -- EVENT for MoonInterior #############################################
+                    for i = 1, 499 do
+                        local args1 = {
+                            [1] = "MoonInterior",
+                            [2] = tostring(i) -- Convert the number to a string
+                        }
+            
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args1))
+            
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+            
+                        local args2 = {
+                            [1] = "MoonInterior",
+                            [2] = tostring(i), -- Convert the number to a string
+                            [3] = true
+                        }
+            
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args2))
+            
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+                    end
                 end
                 -- ##################################################
             end)
+            
     
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
