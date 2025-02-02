@@ -1,5 +1,4 @@
 -- Egg Farm hotdogs v4.4
--- added moon task
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -286,9 +285,20 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                 if equipManagerPets and equipManagerPets[1] and equipManagerPets[1].kind then
                     local currentPetKind = equipManagerPets[1].kind
                     local currentPetUnique = equipManagerPets[1].unique
-            
+                    local eggToFarmExist = false
+
+                    for x, y in pairs(inventoryPets) do
+                        if y.kind == getgenv().eggToFarm then
+                            eggToFarmExist = true
+                            break
+                        else
+                            eggToFarmExist = false
+                        end
+                    end
+
                     -- Check if we need to set petToEquip
-                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (currentPetKind ~= getgenv().eggToFarm) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
+
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
                         
                         local foundPet = false
                         for _, pet in pairs(inventoryPets or {}) do
@@ -317,7 +327,9 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                             else
                                 petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                             end
-                        end                    
+                        end      
+
+                        PetAilmentsArray = {}              
                     end
                 else
                     warn("equip_manager or equip_manager.pets[1] is nil")
@@ -966,23 +978,6 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                             --print("done school")
                         end
         
-                        if table.find(PetAilmentsArray, "moon") then
-                            print("going to the moon, roadtrip")
-                            taskName = "🌙"
-                            getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                            equipPet()
-                            task.wait(3)
-                            game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
-                            repeat task.wait(1)
-                            until not hasTargetAilment("moon")
-                            removeItemByValue(PetAilmentsArray, "moon")
-                            PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                            getAilments(PetAilmentsData)
-                            taskName = "none"
-                            equipPet()
-                            --print("done mysteryTask")
-                        end 
-
                         -- Check if 'salon' is in the PetAilmentsArray
                         if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
                             --print("going salon")
