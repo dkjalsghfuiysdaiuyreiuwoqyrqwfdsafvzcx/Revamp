@@ -1,4 +1,4 @@
--- Egg Farm hotdogs v4.3
+-- Egg Farm hotdogs v4.4
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -252,7 +252,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
         
     
         local levelOfPet = 0
-    
+        local petToEquip
         local function  getHighestLevelPet()
             -- check for cash 750
             for i, v in pairs(fsys.get("inventory").pets) do
@@ -287,11 +287,15 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                     local currentPetUnique = equipManagerPets[1].unique
             
                     -- Check if we need to set petToEquip
-                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (currentPetKind ~= getgenv().eggToFarm) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
                         
                         local foundPet = false
                         for _, pet in pairs(inventoryPets or {}) do
-                            if pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
+                            if pet.kind == getgenv().eggToFarm then
+                                petToEquip = pet.unique
+                                foundPet = true
+                                break
+                            elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
                                 petToEquip = pet.unique
                                 foundPet = true
                                 break
@@ -302,7 +306,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                             if Cash > 750 and getgenv().AutoBuyEggs then
                                 local args = {
                                     [1] = "pets",
-                                    [2] = eggToFarm,
+                                    [2] = getgenv().eggToFarm,
                                     [3] = {
                                         ["buy_count"] = 1
                                     }
@@ -317,7 +321,11 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                 else
                     warn("equip_manager or equip_manager.pets[1] is nil")
                     for _, pet in pairs(inventoryPets or {}) do
-                        if pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
+                        if pet.kind == getgenv().eggToFarm then
+                            petToEquip = pet.unique
+                            foundPet = true
+                            break
+                        elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
                             petToEquip = pet.unique
                             foundPet = true
                             break
@@ -349,28 +357,6 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
             end
             PetAilmentsArray = {}
             --print(petToEquip)
-        end
-    
-        -- Check if pcall was successful
-        local function unequipPet()
-            getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-            if fsys.get("equip_manager").pets[1] and fsys.get("equip_manager").pets[1].kind then
-                for i, v in pairs(fsys.get("inventory").pets) do
-                    if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
-                        levelOfPet = v.properties.age
-                        petToEquip = v.unique
-                        if levelOfPet >= 6 then
-                            break
-                        end
-                    end
-                end
-            end
-            if petToEquip then
-                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
-                task.wait(.3)
-                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
-            
-            end
         end
     
     
@@ -1618,7 +1604,7 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
         local RunService = game:GetService("RunService")
         local currentText
     
-        task.wait(10)
+        task.wait(3)
         task.spawn(startPetFarm)
     else
         print("Script already running")
