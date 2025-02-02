@@ -1,4 +1,5 @@
 -- Egg Farm hotdogs v4.4
+-- added moon task
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -965,6 +966,23 @@ print('Anti-Rejoin', 'Teleportation prevention is now active.')
                             --print("done school")
                         end
         
+                        if table.find(PetAilmentsArray, "moon") then
+                            print("going to the moon, roadtrip")
+                            taskName = "🌙"
+                            getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                            equipPet()
+                            task.wait(3)
+                            game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
+                            repeat task.wait(1)
+                            until not hasTargetAilment("moon")
+                            removeItemByValue(PetAilmentsArray, "moon")
+                            PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                            getAilments(PetAilmentsData)
+                            taskName = "none"
+                            equipPet()
+                            --print("done mysteryTask")
+                        end 
+
                         -- Check if 'salon' is in the PetAilmentsArray
                         if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
                             --print("going salon")
