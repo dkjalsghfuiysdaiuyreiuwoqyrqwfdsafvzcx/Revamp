@@ -1,7 +1,5 @@
 if not _G.ScriptRunning then
-    -- Replaced version (https://github.com/Hiraeth127/WorkingVersions.lua/blob/main/FarmPet105d.lua) -hotdogs
-    -- Currrent version FarmPet105e.lua
-    -- Added pet me task
+    -- remove LNY map
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -31,21 +29,19 @@ if not _G.ScriptRunning then
     end)
 
     print('Anti-Rejoin', 'Teleportation prevention is now active.')
-
+    local router
+    for i, v in next, getgc(true) do
+        if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
+            router = v
+        end
+    end
+    
+    local function rename(remotename, hashedremote)
+        hashedremote.Name = remotename
+    end
+    table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
 
     local function FarmPetGui()
-        local router
-        for i, v in next, getgc(true) do
-            if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
-                router = v
-            end
-        end
-        
-        local function rename(remotename, hashedremote)
-            hashedremote.Name = remotename
-        end
-        table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
-
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
         local PetData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
         
@@ -68,27 +64,6 @@ if not _G.ScriptRunning then
         local babyButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby
         local rbxProductButton = game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Buttons.ButtonTemplate
         local claimButton = game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Frame.Body.Buttons.ClaimButton
-
-        local router
-        for i, v in next, getgc(true) do
-            if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
-                router = v
-            end
-        end
-        local function rename(remotename, hashedremote)
-            hashedremote.Name = remotename
-        end
-        -- Apply renaming to upvalues of the RouterClient.init function
-        table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
-
-
-        local object = game.ServerScriptService -- Replace this with the correct object path
-
-        game:GetService("Players").LocalPlayer.OnTeleport:Connect(function(state)
-            if state == Enum.TeleportState.Started then
-                game:GetService("TeleportService"):Cancel()
-            end
-        end)
 
         task.wait(1)
         local xc = 0
@@ -756,26 +731,6 @@ if not _G.ScriptRunning then
         end
 
         _G.FarmTypeRunning = "none"
-
-        -- EVENT #############################################
-        local maps = { "MainMap", "LNY2025GlitchZone" } -- List of map names
-        local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
-        
-        for _, mapName in ipairs(maps) do
-            for i = 1, 500 do
-                local args = {
-                    [1] = mapName,
-                    [2] = tostring(i) -- Second argument is the current number from 1 to 100
-                }
-                
-                -- Fire the server with the arguments
-                apiPath:FireServer(unpack(args))
-                
-                -- Optional: Add a small delay to prevent overwhelming the server
-                wait(0.1)
-            end
-        end
-        -- ##################################################
         
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
@@ -789,6 +744,29 @@ if not _G.ScriptRunning then
             createPlatform()
             equipPet()
             task.wait(1)
+
+            task.spawn(function()
+                -- EVENT #############################################
+                local maps = { "MainMap", "MoonInterior" } -- List of map names
+                local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
+                
+                for _, mapName in ipairs(maps) do
+                    for i = 1, 999 do
+                        local args = {
+                            [1] = mapName,
+                            [2] = tostring(i), -- Second argument is the current number from 1 to 100
+                            [3] = true
+                        }
+                        
+                        -- Fire the server with the arguments
+                        apiPath:FireServer(unpack(args))
+                        
+                        -- Optional: Add a small delay to prevent overwhelming the server
+                        wait(0.1)
+                    end
+                end
+                -- ##################################################
+            end)
 
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
@@ -2400,7 +2378,7 @@ if not _G.ScriptRunning then
             task.wait(1)
             task.spawn(function()
                 -- EVENT #############################################
-                local maps = { "MainMap", "LNY2025GlitchZone", "MoonInterior" } -- List of map names
+                local maps = { "MainMap", "MoonInterior" } -- List of map names
                 local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
                 
                 for _, mapName in ipairs(maps) do
