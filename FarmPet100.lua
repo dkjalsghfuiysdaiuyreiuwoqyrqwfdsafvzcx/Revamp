@@ -1,5 +1,5 @@
 if not _G.ScriptRunning then
-    -- Moon Task v3
+    -- Baby Jump Fixed
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -426,7 +426,7 @@ if not _G.ScriptRunning then
         end
 
         local function BabyJump()
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/BabyJump"):FireServer(fsys.get("char_wrapper")["char"])
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/ExitSeatStates"):FireServer()
         end
 
 
@@ -2129,7 +2129,7 @@ if not _G.ScriptRunning then
         end
 
         local function BabyJump()
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/BabyJump"):FireServer(fsys.get("char_wrapper")["char"])
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/ExitSeatStates"):FireServer()
         end
 
         --print("After teleports")
