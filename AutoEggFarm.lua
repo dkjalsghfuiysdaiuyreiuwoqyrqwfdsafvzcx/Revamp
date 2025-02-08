@@ -1,5 +1,5 @@
--- Egg Farm hotdogs v4.5
--- Auto tut fixed
+-- Egg Farm hotdogs v5
+-- Prioritize legendary
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -121,6 +121,9 @@ if not _G.ScriptRunning then
     end)
 
 
+    
+
+
     local NewAcc = false
     local HasTradeLic = false
     if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
@@ -209,6 +212,31 @@ if not _G.ScriptRunning then
         return currentMoney
     end
 
+    local checkedPets = {} -- Store checked pet kinds
+
+    local function CheckRarity(petname)
+        -- Skip if we've already checked this pet
+        if checkedPets[petname] then
+            return checkedPets[petname] -- Return cached result
+        end
+
+        for _, z in pairs(game:GetService("ReplicatedStorage").SharedModules.ContentPacks:GetChildren()) do 
+            if z:IsA("Folder") and z:FindFirstChild("InventorySubDB") and z.InventorySubDB:FindFirstChild("Pets") then 
+                for _, Pet in pairs(require(z.InventorySubDB.Pets)) do 
+                    for _, b in pairs(Pet) do
+                        if tostring(b) == petname then
+                            checkedPets[petname] = Pet.rarity or "Unknown" -- Cache the result
+                            return checkedPets[petname]
+                        end
+                    end
+                end
+            end
+        end
+
+        checkedPets[petname] = "Not Found" -- Cache missing pets too
+        return "Not Found"
+    end
+
     task.wait(1)
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
@@ -274,39 +302,186 @@ if not _G.ScriptRunning then
     end
 
     local function equipPet()
-        local success, fsys = pcall(function()
-            return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-        end)
-        
-        if not success or not fsys then
-            warn("Failed to require fsys")
-            return
-        end
-        
-            local equipManager = fsys.get("equip_manager")
-            local equipManagerPets = equipManager and equipManager.pets
-            local inventory = fsys.get("inventory")
-            local inventoryPets = inventory and inventory.pets
-        
-            if equipManagerPets and equipManagerPets[1] and equipManagerPets[1].kind then
-                local currentPetKind = equipManagerPets[1].kind
-                local currentPetUnique = equipManagerPets[1].unique
-                local eggToFarmExist = false
-
-                for x, y in pairs(inventoryPets) do
-                    if y.kind == getgenv().eggToFarm then
-                        eggToFarmExist = true
-                        break
-                    else
-                        eggToFarmExist = false
+        if getgenv().PrioritizeLegs then
+            local success, fsys = pcall(function()
+                return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+            end)
+            
+            if not success or not fsys then
+                warn("Failed to require fsys")
+                return
+            end
+            
+                local equipManager = fsys.get("equip_manager")
+                local equipManagerPets = equipManager and equipManager.pets
+                local inventory = fsys.get("inventory")
+                local inventoryPets = inventory and inventory.pets
+            
+                if equipManagerPets and equipManagerPets[1] and equipManagerPets[1].kind then
+                    local currentPetKind = equipManagerPets[1].kind
+                    local currentPetUnique = equipManagerPets[1].unique
+                    local currentPetAge = equipManagerPets[1].properties.age
+                    local eggToFarmExist = false
+    
+                    for x, y in pairs(inventoryPets) do
+                        if y.kind == getgenv().eggToFarm then
+                            eggToFarmExist = true
+                            break
+                        else
+                            eggToFarmExist = false
+                        end
+                    end
+    
+                    -- Check if we need to set petToEquip
+    
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) or (CheckRarity(currentPetKind) ~= "legendary") or (CheckRarity(currentPetKind) == "legendary" and currentPetAge == 6) then
+                
+                        local foundPet = false
+                        for _, pet in pairs(inventoryPets or {}) do
+                            if pet.kind == getgenv().eggToFarm then
+                                petToEquip = pet.unique
+                                foundPet = true
+                                break
+                            end
+                        end
+                        
+                        if not foundPet then
+                            if Cash > 750 and getgenv().AutoBuyEggs then
+                                local args = {
+                                    [1] = "pets",
+                                    [2] = getgenv().eggToFarm,
+                                    [3] = {
+                                        ["buy_count"] = 1
+                                    }
+                                }
+                                
+                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+                                task.wait(1)
+                                for _, pet in pairs(inventoryPets or {}) do
+                                    if pet.kind == getgenv().eggToFarm then
+                                        petToEquip = pet.unique
+                                        foundPet = true
+                                        break
+                                    end
+                                end
+                            else
+                                petToEquip = getHighestLevelPet() -- Fallback to highest level pet
+                            end
+                        end      
+    
+                        PetAilmentsArray = {}  
+                    elseif (CheckRarity(currentPetKind) == "legendary" and currentPetAge < 6) then
+                        petToEquip = currentPetUnique
+                    end
+                else
+                    warn("equip_manager or equip_manager.pets[1] is nil")
+                    for _, pet in pairs(inventoryPets or {}) do
+                        if pet.kind == getgenv().eggToFarm then
+                            petToEquip = pet.unique
+                            foundPet = true
+                            break
+                        end
+                    end
+                    
+                    if not foundPet then
+                        if Cash > 750 and getgenv().AutoBuyEggs then
+                            local args = {
+                                [1] = "pets",
+                                [2] = getgenv().eggToFarm,
+                                [3] = {
+                                    ["buy_count"] = 1
+                                }
+                            }
+                            
+                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+                            task.wait(1)
+                            for _, pet in pairs(inventoryPets or {}) do
+                                if pet.kind == getgenv().eggToFarm then
+                                    petToEquip = pet.unique
+                                    foundPet = true
+                                    break
+                                end
+                            end
+                        else
+                            petToEquip = getHighestLevelPet() -- Fallback to highest level pet
+                        end
                     end
                 end
-
-                -- Check if we need to set petToEquip
-
-                if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
-                    
-                    local foundPet = false
+            
+    
+            if petToEquip then
+                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                task.wait(.3)
+                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+            end
+            PetAilmentsArray = {}
+            --print(petToEquip)
+        else
+            local success, fsys = pcall(function()
+                return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+            end)
+            
+            if not success or not fsys then
+                warn("Failed to require fsys")
+                return
+            end
+            
+                local equipManager = fsys.get("equip_manager")
+                local equipManagerPets = equipManager and equipManager.pets
+                local inventory = fsys.get("inventory")
+                local inventoryPets = inventory and inventory.pets
+            
+                if equipManagerPets and equipManagerPets[1] and equipManagerPets[1].kind then
+                    local currentPetKind = equipManagerPets[1].kind
+                    local currentPetUnique = equipManagerPets[1].unique
+                    local eggToFarmExist = false
+    
+                    for x, y in pairs(inventoryPets) do
+                        if y.kind == getgenv().eggToFarm then
+                            eggToFarmExist = true
+                            break
+                        else
+                            eggToFarmExist = false
+                        end
+                    end
+    
+                    -- Check if we need to set petToEquip
+    
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
+                        
+                        local foundPet = false
+                        for _, pet in pairs(inventoryPets or {}) do
+                            if pet.kind == getgenv().eggToFarm then
+                                petToEquip = pet.unique
+                                foundPet = true
+                                break
+                            elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
+                                petToEquip = pet.unique
+                                foundPet = true
+                                break
+                            end
+                        end
+                        
+                        if not foundPet then
+                            if Cash > 750 and getgenv().AutoBuyEggs then
+                                local args = {
+                                    [1] = "pets",
+                                    [2] = getgenv().eggToFarm,
+                                    [3] = {
+                                        ["buy_count"] = 1
+                                    }
+                                }
+                                
+                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+                            else
+                                petToEquip = getHighestLevelPet() -- Fallback to highest level pet
+                            end
+                        end      
+    
+                        PetAilmentsArray = {}              
+                    end
+                else
+                    warn("equip_manager or equip_manager.pets[1] is nil")
                     for _, pet in pairs(inventoryPets or {}) do
                         if pet.kind == getgenv().eggToFarm then
                             petToEquip = pet.unique
@@ -333,49 +508,18 @@ if not _G.ScriptRunning then
                         else
                             petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                         end
-                    end      
-
-                    PetAilmentsArray = {}              
-                end
-            else
-                warn("equip_manager or equip_manager.pets[1] is nil")
-                for _, pet in pairs(inventoryPets or {}) do
-                    if pet.kind == getgenv().eggToFarm then
-                        petToEquip = pet.unique
-                        foundPet = true
-                        break
-                    elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
-                        petToEquip = pet.unique
-                        foundPet = true
-                        break
                     end
                 end
-                
-                if not foundPet then
-                    if Cash > 750 and getgenv().AutoBuyEggs then
-                        local args = {
-                            [1] = "pets",
-                            [2] = getgenv().eggToFarm,
-                            [3] = {
-                                ["buy_count"] = 1
-                            }
-                        }
-                        
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
-                    else
-                        petToEquip = getHighestLevelPet() -- Fallback to highest level pet
-                    end
-                end
+            
+    
+            if petToEquip then
+                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                task.wait(.3)
+                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
             end
-        
-
-        if petToEquip then
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
-            task.wait(.3)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+            PetAilmentsArray = {}
+            --print(petToEquip)
         end
-        PetAilmentsArray = {}
-        --print(petToEquip)
     end
 
 
@@ -983,6 +1127,23 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done school")
                     end
+
+                    if table.find(PetAilmentsArray, "moon") then
+                        print("going to the moon, roadtrip")
+                        taskName = "🌙"
+                        getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                        equipPet()
+                        task.wait(3)
+                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
+                        repeat task.wait(1)
+                        until not hasTargetAilment("moon")
+                        removeItemByValue(PetAilmentsArray, "moon")
+                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                        getAilments(PetAilmentsData)
+                        taskName = "none"
+                        equipPet()
+                        --print("done mysteryTask")
+                    end 
     
                     -- Check if 'salon' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
