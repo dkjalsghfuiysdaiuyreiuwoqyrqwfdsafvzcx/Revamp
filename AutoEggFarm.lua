@@ -1,5 +1,5 @@
--- Egg Farm hotdogs v5
--- Prioritize legendary
+-- Egg Farm hotdogs v5.1
+-- Auto Egg Fixed
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -290,11 +290,21 @@ if not _G.ScriptRunning then
     local function  getHighestLevelPet()
         -- check for cash 750
         for i, v in pairs(fsys.get("inventory").pets) do
-            if levelOfPet < v.properties.age and v.kind ~= "practice_dog" then
-                levelOfPet = v.properties.age
-                petToEquip = v.unique
-                if levelOfPet >= 6 then
-                    return petToEquip
+            if v.kind ~= "practice_dog" then -- Ignore practice_dog
+                if rarity:lower() == "legendary" then
+                    -- Prioritize the highest-level legendary pet
+                    if petLevel > highestLegendaryLevel then
+                        highestLegendaryLevel = petLevel
+                        petToEquip = v.unique
+                    end
+                else
+                    -- Store highest level non-legendary pet as backup
+                    if petLevel > highestOtherLevel then
+                        highestOtherLevel = petLevel
+                        if not petToEquip then -- Only set if no legendary was found
+                            petToEquip = v.unique
+                        end
+                    end
                 end
             end
         end
@@ -323,25 +333,21 @@ if not _G.ScriptRunning then
                     local currentPetAge = equipManagerPets[1].properties.age
                     local eggToFarmExist = false
     
-                    for x, y in pairs(inventoryPets) do
-                        if y.kind == getgenv().eggToFarm then
-                            eggToFarmExist = true
-                            break
-                        else
-                            eggToFarmExist = false
-                        end
-                    end
     
                     -- Check if we need to set petToEquip
     
-                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) or (CheckRarity(currentPetKind) ~= "legendary") or (CheckRarity(currentPetKind) == "legendary" and currentPetAge == 6) then
+                    if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
                 
                         local foundPet = false
                         for _, pet in pairs(inventoryPets or {}) do
-                            if pet.kind == getgenv().eggToFarm then
+                            if pet.kind == "moon_2025_sunglider" and pet.properties.age < 6 or pet.kind == "moon_2025_dimension_drifter" and pet.properties.age < 6 then
                                 petToEquip = pet.unique
                                 foundPet = true
                                 break
+                            end
+                            if pet.kind == getgenv().eggToFarm then
+                                petToEquip = pet.unique
+                                foundPet = true
                             end
                         end
                         
@@ -376,6 +382,11 @@ if not _G.ScriptRunning then
                 else
                     warn("equip_manager or equip_manager.pets[1] is nil")
                     for _, pet in pairs(inventoryPets or {}) do
+                        if pet.kind == "moon_2025_sunglider" and pet.properties.age < 6 or pet.kind == "moon_2025_dimension_drifter" and pet.properties.age < 6 then
+                            petToEquip = pet.unique
+                            foundPet = true
+                            break
+                        end
                         if pet.kind == getgenv().eggToFarm then
                             petToEquip = pet.unique
                             foundPet = true
@@ -920,7 +931,7 @@ if not _G.ScriptRunning then
     local function startPetFarm()
         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-        task.wait(1)
+        task.wait(5)
         buyItems()
         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
