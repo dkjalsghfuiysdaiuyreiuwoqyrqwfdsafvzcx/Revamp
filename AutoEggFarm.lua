@@ -1,4 +1,4 @@
--- Egg Farm hotdogs v5.5
+-- Egg Farm hotdogs v6
 -- Auto Egg Fixed
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -291,6 +291,7 @@ if not _G.ScriptRunning then
         -- check for cash 750
         for i, v in pairs(fsys.get("inventory").pets) do
             if v.kind ~= "practice_dog" then -- Ignore practice_dog
+                local rarity = CheckRarity(v.kind) -- Get pet rarity
                 if rarity:lower() == "legendary" then
                     -- Prioritize the highest-level legendary pet
                     if petLevel > highestLegendaryLevel then
@@ -312,9 +313,8 @@ if not _G.ScriptRunning then
     end
 
     local function equipPet()
-        PetAilmentsArray = {}
         if getgenv().PrioritizeLegs then
-            PetAilmentsArray = {}
+            
             local success, fsys = pcall(function()
                 return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             end)
@@ -369,6 +369,7 @@ if not _G.ScriptRunning then
                                     if pet.kind == getgenv().eggToFarm then
                                         petToEquip = pet.unique
                                         foundPet = true
+                                        PetAilmentsArray = {}
                                         break
                                     end
                                 end
@@ -412,11 +413,13 @@ if not _G.ScriptRunning then
                                 if pet.kind == getgenv().eggToFarm then
                                     petToEquip = pet.unique
                                     foundPet = true
+                                    PetAilmentsArray = {}
                                     break
                                 end
                             end
                         else
                             petToEquip = getHighestLevelPet() -- Fallback to highest level pet
+                            PetAilmentsArray = {}
                         end
                     end
                 end
@@ -486,8 +489,10 @@ if not _G.ScriptRunning then
                                 }
                                 
                                 game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+                                PetAilmentsArray = {}
                             else
                                 petToEquip = getHighestLevelPet() -- Fallback to highest level pet
+                                PetAilmentsArray = {}
                             end
                         end      
     
@@ -518,6 +523,7 @@ if not _G.ScriptRunning then
                             }
                             
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+                            PetAilmentsArray = {}
                         else
                             petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                         end
@@ -853,13 +859,6 @@ if not _G.ScriptRunning then
                 game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer,getgenv().FoodID,"UseBlock",{['cframe'] = CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, .5, 0))},fsys.get("pet_char_wrappers")[1]["char"])
                 repeat task.wait(1)
                 until not hasTargetAilment("hungry")
-
-                local args = {
-                    [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                }
-                
-                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
-                
                 local args = {
                     [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                 }
@@ -892,11 +891,6 @@ if not _G.ScriptRunning then
                 game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer,getgenv().WaterID,"UseBlock",{['cframe'] = CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, .5, 0))},fsys.get("pet_char_wrappers")[1]["char"])
                 repeat task.wait(1)
                 until not hasTargetAilment("thirsty")
-                local args = {
-                    [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                }
-                
-                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
                 local args = {
                     [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                 }
@@ -1256,11 +1250,6 @@ if not _G.ScriptRunning then
                                 [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                             }
                             
-                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
-                            local args = {
-                                [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                            }
-                            
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
                         else
                             startingMoney = getCurrentMoney()
@@ -1400,11 +1389,6 @@ if not _G.ScriptRunning then
                                 [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                             }
                             
-                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
-                            local args = {
-                                [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                            }
-                            
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
                             removeItemByValue(PetAilmentsArray, "dirty")
                         else
@@ -1463,11 +1447,6 @@ if not _G.ScriptRunning then
                             game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer, getgenv().BedID, "UseBlock", {['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))}, fsys.get("pet_char_wrappers")[1]["char"])
                             repeat task.wait(1)
                             until not hasTargetAilment("sleepy") 
-                            local args = {
-                                [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                            }
-                            
-                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
                             local args = {
                                 [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                             }
@@ -1531,11 +1510,6 @@ if not _G.ScriptRunning then
     
                             repeat task.wait(1)
                             until not hasTargetAilment("toilet")
-                            local args = {
-                                [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                            }
-                            
-                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
                             local args = {
                                 [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                             }
@@ -1687,11 +1661,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateInteriorFurniture"):InvokeServer(getgenv().HospitalBedID, "Seat1", {['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))}, fsys.get("pet_char_wrappers")[1]["char"])
                         task.wait(15)
-                        local args = {
-                            [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                        }
-                        
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
                         local args = {
                             [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
                         }
@@ -1861,12 +1830,6 @@ if not _G.ScriptRunning then
                         task.wait(0.3)
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(fsys.get("pet_char_wrappers")[1]["char"])  
-
-                        local args = {
-                            [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                        }
-                        
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(unpack(args))
                         task.wait(0.3)              
                         PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
                         getAilments(PetAilmentsData)
