@@ -1,4 +1,4 @@
--- Egg Farm hotdogs v5.3
+-- Egg Farm hotdogs v5.4
 -- Auto Egg Fixed
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -312,15 +312,8 @@ if not _G.ScriptRunning then
     end
 
     local function equipPet()
-        PetAilmentsArray = {}
         if getgenv().PrioritizeLegs then
             PetAilmentsArray = {}
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/HoldBaby"):FireServer(getgenv().fsys.get("pet_char_wrappers")[1].pet_unique)
-            local args = {
-                [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
             local success, fsys = pcall(function()
                 return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
             end)
