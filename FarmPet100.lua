@@ -1,5 +1,5 @@
 if not _G.ScriptRunning then
-    -- Tutorial fixed
+    -- Added time to load
 
     if not hookmetamethod then
         return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -740,7 +740,7 @@ if not _G.ScriptRunning then
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-            task.wait(1)
+            task.wait(5)
             buyItems()
             local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
             game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
@@ -748,7 +748,7 @@ if not _G.ScriptRunning then
             teleportPlayerNeeds(0,350,0)
             createPlatform()
             equipPet()
-            task.wait(1)
+            task.wait(5)
 
             -- EVENTTTT
 
@@ -2449,7 +2449,7 @@ if not _G.ScriptRunning then
         local function startPetFarm()
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
-            task.wait(1)
+            task.wait(5)
             buyItems()
             task.wait(2)
             local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
@@ -2458,7 +2458,7 @@ if not _G.ScriptRunning then
             teleportPlayerNeeds(0,350,0)
             createPlatform()
             equipPet()
-            task.wait(1)
+            task.wait(5)
             local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
 
             task.spawn(function()
