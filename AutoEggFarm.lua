@@ -1,5 +1,5 @@
--- Egg Farm hotdogs v6.1
--- Removed Pet_Me
+-- Egg Farm hotdogs v6.2
+--fixed highest level
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -284,7 +284,8 @@ if not _G.ScriptRunning then
     -- ########################################################################################################################################################################
 
     
-
+    local highestLegendaryLevel = 0
+    local highestOtherLevel = 0
     local levelOfPet = 0
     local petToEquip
     local function  getHighestLevelPet()
