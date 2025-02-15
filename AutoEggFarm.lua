@@ -1,5 +1,5 @@
 -- Egg Farm hotdogs v6.2
---fixed highest level
+-- added rose
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
