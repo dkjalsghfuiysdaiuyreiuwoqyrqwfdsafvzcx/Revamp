@@ -1,4 +1,4 @@
--- Egg Farm hotdogs v6.2
+-- Egg Farm hotdogs v6.3
 -- added rose
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
@@ -291,8 +291,10 @@ if not _G.ScriptRunning then
     local function  getHighestLevelPet()
         -- check for cash 750
         for i, v in pairs(fsys.get("inventory").pets) do
+            local rarity = CheckRarity(v.kind) -- Get pet rarity
+            local petLevel = v.properties.age -- Get pet level
             if v.kind ~= "practice_dog" then -- Ignore practice_dog
-                local rarity = CheckRarity(v.kind) -- Get pet rarity
+                
                 if rarity:lower() == "legendary" then
                     -- Prioritize the highest-level legendary pet
                     if petLevel > highestLegendaryLevel then
