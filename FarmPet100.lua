@@ -1,3 +1,4 @@
+-- Added new rose
 if not _G.ScriptRunning then
     -- Added time to load
 
@@ -750,72 +751,38 @@ if not _G.ScriptRunning then
             equipPet()
             task.wait(5)
 
-            -- EVENTTTT
+        -- ######################################### EVENT
 
-            local apiPath = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MoonAPI/ShootingStarCollected")
-
-            task.spawn(function()
-                for run = 1, 20 do -- Repeat 20 times
-                    -- EVENT for MainMap #############################################
-                    for i = 1, 499 do
-                        local args1 = {
-                            [1] = "MainMap",
-                            [2] = tostring(i) -- Convert the number to a string
+        task.spawn(function()
+            while true do -- Infinite loop to keep running every 15 minutes
+                for j = 1, 8 do 
+                    local args = {
+                        [1] = j
+                    }
+            
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRose"):FireServer(unpack(args))
+            
+                    for i = 1, 20 do
+                        local args = {
+                            [1] = j,
+                            [2] = {
+                                [1] = i,
+                            }
                         }
             
-                        -- Fire the server with the arguments
-                        apiPath:FireServer(unpack(args1))
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRoseHearts"):FireServer(unpack(args))
             
-                        -- Optional: Add a small delay to prevent overwhelming the server
-                        wait(0.1)
-            
-                        local args2 = {
-                            [1] = "MainMap",
-                            [2] = tostring(i), -- Convert the number to a string
-                            [3] = true
-                        }
-            
-                        -- Fire the server with the arguments
-                        apiPath:FireServer(unpack(args2))
-            
-                        -- Optional: Add a small delay to prevent overwhelming the server
-                        wait(0.1)
+                        task.wait(0.1) -- Small delay to prevent potential lag or rate limiting
                     end
                 end
-                -- ##################################################
-            end)
             
-            task.spawn(function()
-                for run = 1, 20 do -- Repeat 20 times
-                    -- EVENT for MoonInterior #############################################
-                    for i = 1, 499 do
-                        local args1 = {
-                            [1] = "MoonInterior",
-                            [2] = tostring(i) -- Convert the number to a string
-                        }
-            
-                        -- Fire the server with the arguments
-                        apiPath:FireServer(unpack(args1))
-            
-                        -- Optional: Add a small delay to prevent overwhelming the server
-                        wait(0.1)
-            
-                        local args2 = {
-                            [1] = "MoonInterior",
-                            [2] = tostring(i), -- Convert the number to a string
-                            [3] = true
-                        }
-            
-                        -- Fire the server with the arguments
-                        apiPath:FireServer(unpack(args2))
-            
-                        -- Optional: Add a small delay to prevent overwhelming the server
-                        wait(0.1)
-                    end
-                end
-                -- ##################################################
-            end)
-            
+                print("Getting roses :D")
+                task.wait(900) -- Wait for 15 minutes before repeating
+            end            
+        end)
+
+
+        -- #########################################
 
             local Players = game:GetService("Players")
             local player = Players.LocalPlayer
