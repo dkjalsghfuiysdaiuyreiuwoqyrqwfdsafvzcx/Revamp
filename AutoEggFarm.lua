@@ -1,5 +1,5 @@
 -- Egg Farm hotdogs v6.4
--- FIXED 100
+-- FIXED 100.1
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -427,11 +427,22 @@ if not _G.ScriptRunning then
                         petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                         print('In the fallback')
                         PetAilmentsArray = {}
+                        
+                    end
+
+                    if petToEquip then
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
                         task.wait(.3)
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
                     end
+                    PetAilmentsArray = {}
                 end
+                if petToEquip then
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                    task.wait(.3)
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                end
+                PetAilmentsArray = {}
             end
             
     
@@ -504,6 +515,12 @@ if not _G.ScriptRunning then
                                 petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                                 PetAilmentsArray = {}
                             end
+                            if petToEquip then
+                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                                task.wait(.3)
+                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                            end
+                            PetAilmentsArray = {}
                         end      
     
 
@@ -515,6 +532,12 @@ if not _G.ScriptRunning then
                         end
                         PetAilmentsArray = {}             
                     end
+                    if petToEquip then
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                        task.wait(.3)
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                    end
+                    PetAilmentsArray = {}
                 else
                     warn("equip_manager or equip_manager.pets[1] is nil")
                     for _, pet in pairs(inventoryPets or {}) do
