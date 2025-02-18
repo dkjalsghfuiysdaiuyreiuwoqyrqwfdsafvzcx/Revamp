@@ -1,5 +1,5 @@
 -- Added new rose 1.0
--- Fixed Gui
+-- added optimizer
 if not _G.ScriptRunning then
     -- Added time to load
 
@@ -2428,6 +2428,21 @@ if not _G.ScriptRunning then
             equipPet()
             task.wait(5)
 
+
+            task.spawn(function()
+                while true do
+                    -- Loop through all descendants in the workspace
+                    for _, obj in ipairs(workspace:GetDescendants()) do
+                        -- Check if the object's name matches "BucksBillboard" or "XPBillboard"
+                        if obj.Name == "BucksBillboard" or obj.Name == "XPBillboard" then
+                            obj:Destroy() -- Remove the object from the workspace
+                        end
+                    end
+                    -- Wait for 0.2 seconds before running again
+                    task.wait(0.5)
+                end
+            end)
+            
 
             -- ######################################### EVENT
 
