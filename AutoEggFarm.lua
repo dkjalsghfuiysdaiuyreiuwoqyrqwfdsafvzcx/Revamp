@@ -1,5 +1,5 @@
 -- Egg Farm hotdogs v4.5
--- added timer
+-- added optimizer
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -799,6 +799,20 @@ if not _G.ScriptRunning then
         createPlatform()
         equipPet()
         task.wait(1)
+
+        task.spawn(function()
+            while true do
+                -- Loop through all descendants in the workspace
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    -- Check if the object's name matches "BucksBillboard" or "XPBillboard"
+                    if obj.Name == "BucksBillboard" or obj.Name == "XPBillboard" then
+                        obj:Destroy() -- Remove the object from the workspace
+                    end
+                end
+                -- Wait for 0.2 seconds before running again
+                task.wait(0.5)
+            end
+        end)
 
         -- ######################################### EVENT
 
