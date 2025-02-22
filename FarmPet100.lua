@@ -1,5 +1,5 @@
 -- Added new rose 1.0
--- Fixed Tutorial
+-- Fixed Tutorials
 if not _G.ScriptRunning then
     -- Added time to load
 
