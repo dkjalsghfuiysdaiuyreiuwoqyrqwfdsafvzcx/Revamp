@@ -1,4 +1,4 @@
--- Egg Farm REVAMPED
+-- EGGFARM REVAMPED2
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -809,38 +809,24 @@ if not _G.ScriptRunning then
 
         -- ######################################### EVENT
 
-        task.spawn(function()
-            while true do -- Infinite loop to keep running every 15 minutes
-                for j = 1, 8 do 
-                    local args = {
-                        [1] = j
-                    }
-            
-                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRose"):FireServer(unpack(args))
-            
-                    for i = 1, 20 do
-                        local args = {
-                            [1] = j,
-                            [2] = {
-                                [1] = i,
-                            }
-                        }
-            
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRoseHearts"):FireServer(unpack(args))
-            
-                        task.wait(0.1) -- Small delay to prevent potential lag or rate limiting
-                    end
-                end
-            
-                --print("Getting roses :D")
-                task.wait(900) -- Wait for 15 minutes before repeating
-            end            
-        end)
-
+        -- NO EVENT
 
         -- #########################################
         
-
+        task.spawn(function()
+            while true do
+                -- Loop through all descendants in the workspace
+                for _, obj in ipairs(workspace:GetDescendants()) do
+                    -- Check if the object's name matches "BucksBillboard" or "XPBillboard"
+                    if obj.Name == "BucksBillboard" or obj.Name == "XPBillboard" then
+                        obj:Destroy() -- Remove the object from the workspace
+                    end
+                end
+                -- Wait for 0.2 seconds before running again
+                task.wait(0.5)
+            end
+        end)
+        
         local Players = game:GetService("Players")
         local player = Players.LocalPlayer
         local character = player.Character or player.CharacterAdded:Wait()
