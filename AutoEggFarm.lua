@@ -1,5 +1,4 @@
--- Egg Farm hotdogs v4.5
--- added optimizer
+-- Egg Farm REVAMPED
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -273,6 +272,34 @@ if not _G.ScriptRunning then
         return petToEquip
     end
 
+    local PetAilmentsArray = {}
+    local BabyAilmentsArray = {}
+    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+    local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+    local BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
+
+    local function getAilments(tbl)
+        task.wait(.3)
+        local equipManager = fsys.get("equip_manager")
+        local equipManagerPets = equipManager and equipManager.pets
+        PetAilmentsArray = {}
+        for key, value in pairs(tbl) do
+            if key == equipManagerPets[1].unique then
+                for subKey, subValue in pairs(value) do
+                    table.insert(PetAilmentsArray, subValue.kind)
+                    --print("ailment added: ", subValue.kind)
+                end
+            end
+        end
+    end
+    local function getBabyAilments(tbl)
+        BabyAilmentsArray = {}
+        for key, value in pairs(tbl) do
+            table.insert(BabyAilmentsArray, key)
+            --print("Baby ailment: ", key)
+        end
+    end
+    
     local function equipPet()
         local success, fsys = pcall(function()
             return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -283,44 +310,28 @@ if not _G.ScriptRunning then
             return
         end
         
+        
             local equipManager = fsys.get("equip_manager")
             local equipManagerPets = equipManager and equipManager.pets
             local inventory = fsys.get("inventory")
             local inventoryPets = inventory and inventory.pets
+            local eggToFarmExist = false
         
             if equipManagerPets and equipManagerPets[1] and equipManagerPets[1].kind then
                 local currentPetKind = equipManagerPets[1].kind
                 local currentPetUnique = equipManagerPets[1].unique
-                local eggToFarmExist = false
 
-                for x, y in pairs(inventoryPets) do
-                    if y.kind == getgenv().eggToFarm then
-                        eggToFarmExist = true
-                        break
-                    else
-                        eggToFarmExist = false
-                    end
-                end
-
-                -- Check if we need to set petToEquip
-
-                if petToEquip == nil or (currentPetUnique ~= petToEquip) or (eggToFarmExist and getgenv().eggToFarm ~= currentPetKind) or (not currentPetKind:lower():match("egg$") and Cash > 750 and getgenv().AutoBuyEggs) then
-                    
-                    local foundPet = false
-                    for _, pet in pairs(inventoryPets or {}) do
-                        if pet.kind == getgenv().eggToFarm then
-                            petToEquip = pet.unique
-                            foundPet = true
-                            break
-                        elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
-                            petToEquip = pet.unique
-                            foundPet = true
+                if (petToEquip == nil) or (currentPetUnique ~= petToEquip) then
+                    for x, y in pairs(inventoryPets) do
+                        if y.kind == getgenv().eggToFarm then
+                            eggToFarmExist = true
+                            petToEquip = y.unique
                             break
                         end
                     end
-                    
-                    if not foundPet then
-                        if Cash > 750 and getgenv().AutoBuyEggs then
+    
+                    if eggToFarmExist == false then
+                        if ClientData.get_data()[game.Players.LocalPlayer.Name].money > 750 and getgenv().AutoBuyEggs then
                             local args = {
                                 [1] = "pets",
                                 [2] = getgenv().eggToFarm,
@@ -330,29 +341,32 @@ if not _G.ScriptRunning then
                             }
                             
                             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+
+                            task.wait(0.5)  -- Adjust wait time as needed
+                            equipManager = fsys.get("equip_manager")
+                            equipManagerPets = equipManager and equipManager.pets
+                            petToEquip = equipManagerPets[1].unique
                         else
                             petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                         end
-                    end      
-
-                    PetAilmentsArray = {}              
+                    end
+                    if petToEquip then
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                        task.wait(.3)
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                    end
                 end
             else
-                warn("equip_manager or equip_manager.pets[1] is nil")
-                for _, pet in pairs(inventoryPets or {}) do
-                    if pet.kind == getgenv().eggToFarm then
-                        petToEquip = pet.unique
-                        foundPet = true
-                        break
-                    elseif pet.kind:lower():match("egg$") then -- Matches 'egg' only at the end of the string
-                        petToEquip = pet.unique
-                        foundPet = true
+                for x, y in pairs(inventoryPets) do
+                    if y.kind == getgenv().eggToFarm then
+                        eggToFarmExist = true
+                        petToEquip = y.unique
                         break
                     end
                 end
-                
-                if not foundPet then
-                    if Cash > 750 and getgenv().AutoBuyEggs then
+
+                if eggToFarmExist == false then
+                    if ClientData.get_data()[game.Players.LocalPlayer.Name].money > 750 and getgenv().AutoBuyEggs then
                         local args = {
                             [1] = "pets",
                             [2] = getgenv().eggToFarm,
@@ -362,19 +376,31 @@ if not _G.ScriptRunning then
                         }
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ShopAPI/BuyItem"):InvokeServer(unpack(args))
+
+                        task.wait(0.5)  -- Adjust wait time as needed
+                        equipManager = fsys.get("equip_manager")
+                        equipManagerPets = equipManager and equipManager.pets
+                        petToEquip = equipManagerPets[1].unique
                     else
                         petToEquip = getHighestLevelPet() -- Fallback to highest level pet
                     end
                 end
+                if petToEquip then
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                    task.wait(.3)
+                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
+                end
             end
-        
-
-        if petToEquip then
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Unequip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
             task.wait(.3)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(petToEquip, {["use_sound_delay"] = true, ["equip_as_last"] = false})
-        end
-        PetAilmentsArray = {}
+            PetAilmentsArray = {}
+            task.wait(.3)
+            PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+            task.wait(.3)
+            BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
+            getAilments(PetAilmentsData)
+            task.wait(.3)
+            getBabyAilments(BabyAilmentsData)
+            task.wait(.3)
         --print(petToEquip)
     end
 
@@ -565,61 +591,32 @@ if not _G.ScriptRunning then
 
     local function get_mystery_task()
         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-        local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-
-        for ailmentId, ailment in pairs(PetAilmentsData) do
-            for taskId, task in pairs(ailment) do
-                if task.kind == "mystery" and task.components and task.components.mystery then
-                    local ailmentKey = task.components.mystery.ailment_key
-                    local foundMystery = false
-
-                    for i = 1, 3 do
-                        if foundMystery then break end
-
-                        wait(0.5)
-                        pcall(function()
-                            local actions = {"hungry", "thirsty", "sleepy", "toilet", "bored", "dirty", "play", "school", "salon", "pizza_party", "sick", "camping", "beach_party", "walk", "ride"}
-                            
-                            for _, action in ipairs(actions) do
-                                if not PetAilmentsData[ailmentId] or not PetAilmentsData[ailmentId][taskId] then
-                                    --print("Mystery task not found anymore.")
-                                    foundMystery = true
-                                    break
-                                end
-
-                                wait(0.5)
-                                local args = {
-                                    [1] = ailmentKey,
-                                    [2] = i,
-                                    [3] = action
-                                }
-
-                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
-                            end
-                        end)
-                    end
-                end
+        local currentPetUnique = ClientData.get("equip_manager").pets[1].unique
+        
+        -- Define mystery ailments array
+        local mysteryAilmentsArray = {
+            "toilet", "camping", "hungry", "thirsty", "walk", "bored", 
+            "beach_party", "salon", "pet_me", "school", "ride", "play", "pizza_party"
+        }
+        
+        -- Loop to iterate over the ailments in 3 iterations
+        for i = 1, 3 do
+            -- Print all elements using a loop
+            for _, ailment in pairs(mysteryAilmentsArray) do
+                local args = {
+                    [1] = currentPetUnique,
+                    [2] = "mystery",
+                    [3] = i,  -- Iteration number (1, 2, 3)
+                    [4] = ailment -- Send the whole array in each loop
+                }
+                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
+                task.wait(.1)
             end
+            task.wait(.1)
         end
     end
 
-    local PetAilmentsArray = {}
-    local BabyAilmentsArray = {}
-    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    local PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-    local BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-
-    local function getAilments(tbl)
-        PetAilmentsArray = {}
-        for key, value in pairs(tbl) do
-            if key == petToEquip then
-                for subKey, subValue in pairs(value) do
-                    table.insert(PetAilmentsArray, subValue.kind)
-                    --print("ailment added: ", subValue.kind)
-                end
-            end
-        end
-    end
+    
 
     Player.PlayerGui.TransitionsApp.Whiteout:GetPropertyChangedSignal("BackgroundTransparency"):Connect(function()
         if Player.PlayerGui.TransitionsApp.Whiteout.BackgroundTransparency == 0 then
@@ -627,13 +624,7 @@ if not _G.ScriptRunning then
         end
     end)
 
-    local function getBabyAilments(tbl)
-        BabyAilmentsArray = {}
-        for key, value in pairs(tbl) do
-            table.insert(BabyAilmentsArray, key)
-            --print("Baby ailment: ", key)
-        end
-    end
+    
 
     -- Function to buy an item
     local function buyItem(itemName)
@@ -669,9 +660,11 @@ if not _G.ScriptRunning then
     end
 
     local function hasTargetAilment(targetKind)
+        print(targetKind)
         local ailments = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
         for _, ailment in pairs(ailments) do
             if ailment.kind == targetKind then
+                print(ailment.kind)
                 return true
             end
         end
@@ -872,16 +865,10 @@ if not _G.ScriptRunning then
                 repeat task.wait(5)
                     task.wait(1)
                     equipPet()
-                    --print("inside repeat oten")
-                    PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                    BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                    getAilments(PetAilmentsData)
-                    getBabyAilments(BabyAilmentsData)
                     if table.find(PetAilmentsArray, "hungry") or table.find(PetAilmentsArray, "thirsty") then
                         EatDrinkSafeCall(true)
                     end
                     -- print("lapas sa hungry")
-    
                     -- Baby hungry
                     if table.find(BabyAilmentsArray, "hungry") then
                         -- Baby hungry
@@ -896,7 +883,6 @@ if not _G.ScriptRunning then
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
                     end
-                    
                     -- Baby thirsty
                     if table.find(BabyAilmentsArray, "thirsty") then
                         -- Baby thirsty
@@ -911,45 +897,45 @@ if not _G.ScriptRunning then
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
                     end
-    
-                    -- Baby sick
-                    if table.find(BabyAilmentsArray, "sick") then
-                        -- Baby sick
+                    
+                    -- -- Baby sick
+                    -- if table.find(BabyAilmentsArray, "sick") then
+                    --     -- Baby sick
                         
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("Hospital")
-                        task.wait(0.3)
-                        teleportPlayerNeeds(0, 350, 0)
-                        task.wait(0.3)
-                        createPlatform()
-                        task.wait(0.3)
-                        getgenv().HospitalBedID = GetFurniture("HospitalRefresh2023Bed")
-                        task.wait(2)
-                        task.spawn(function()
-                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateInteriorFurniture"):InvokeServer(getgenv().HospitalBedID, "Seat1", {["cframe"] = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position)}, fsys.get("char_wrapper")["char"])
-                        end)
-                        task.wait(15)
-                        BabyJump()
-                        removeItemByValue(BabyAilmentsArray, "sick")
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getBabyAilments(BabyAilmentsData)
-                        -- Check if petfarm is true
-                        if not getgenv().PetFarmGuiStarter then
-                            return -- Exit the function or stop the process if petfarm is false
-                        end
-                        task.wait(1)
-                        task.wait(0.3)
-                        local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
-                        game:GetService("Players").LocalPlayer, LiveOpsMapSwap.get_current_map_type())
-                        task.wait(0.3)
-                        teleportPlayerNeeds(0, 350, 0)
-                        task.wait(0.3)
-                        createPlatform()
-                        task.wait(0.3)
-                        equipPet()
-                        --print("done sick")
-                    end
-    
+                    --     game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("Hospital")
+                    --     task.wait(0.3)
+                    --     teleportPlayerNeeds(0, 350, 0)
+                    --     task.wait(0.3)
+                    --     createPlatform()
+                    --     task.wait(0.3)
+                    --     getgenv().HospitalBedID = GetFurniture("HospitalRefresh2023Bed")
+                    --     task.wait(2)
+                    --     task.spawn(function()
+                    --         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateInteriorFurniture"):InvokeServer(getgenv().HospitalBedID, "Seat1", {["cframe"] = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position)}, fsys.get("char_wrapper")["char"])
+                    --     end)
+                    --     task.wait(15)
+                    --     BabyJump()
+                    --     removeItemByValue(BabyAilmentsArray, "sick")
+                    --     BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
+                    --     getBabyAilments(BabyAilmentsData)
+                    --     -- Check if petfarm is true
+                    --     if not getgenv().PetFarmGuiStarter then
+                    --         return -- Exit the function or stop the process if petfarm is false
+                    --     end
+                    --     task.wait(1)
+                    --     task.wait(0.3)
+                    --     local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
+                    --     game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
+                    --     game:GetService("Players").LocalPlayer, LiveOpsMapSwap.get_current_map_type())
+                    --     task.wait(0.3)
+                    --     teleportPlayerNeeds(0, 350, 0)
+                    --     task.wait(0.3)
+                    --     createPlatform()
+                    --     task.wait(0.3)
+                    --     equipPet()
+                    --     --print("done sick")
+                    -- end
+
                     -- Check if 'school' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "school") or table.find(BabyAilmentsArray, "school") then
                         --print("going school")
@@ -958,7 +944,6 @@ if not _G.ScriptRunning then
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("School")
                         teleportPlayerNeeds(0, 350, 0)
                         createPlatform()
-                        equipPet()
                         local t = 0
                         repeat 
                             task.wait(1)
@@ -968,10 +953,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "school")
                         removeItemByValue(BabyAilmentsArray, "school")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getAilments(PetAilmentsData)
-                        getBabyAilments(BabyAilmentsData)
                         taskName = "none"
                         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
@@ -984,27 +965,6 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done school")
                     end
-
-                    if table.find(PetAilmentsArray, "moon") then
-                        --print("going to the moon, roadtrip")
-                        taskName = "🌙"
-                        getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
-                        task.wait(3)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
-                        local t = 0
-                        repeat 
-                            task.wait(1)
-                            t = t + 1
-                        until (not hasTargetAilment or not hasTargetAilment("moon")) or t > 60
-
-                        removeItemByValue(PetAilmentsArray, "moon")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
-                        taskName = "none"
-                        equipPet()
-                        --print("done mysteryTask")
-                    end 
     
                     -- Check if 'salon' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "salon") or table.find(BabyAilmentsArray, "salon") then
@@ -1014,7 +974,6 @@ if not _G.ScriptRunning then
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("Salon")
                         teleportPlayerNeeds(0, 350, 0)
                         createPlatform()
-                        equipPet()
                         local t = 0
                         repeat 
                             task.wait(1)
@@ -1030,10 +989,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "salon")
                         removeItemByValue(BabyAilmentsArray, "salon")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getAilments(PetAilmentsData)
-                        getBabyAilments(BabyAilmentsData)
                         taskName = "none"
                         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
@@ -1054,7 +1009,6 @@ if not _G.ScriptRunning then
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("PizzaShop")
                         teleportPlayerNeeds(0, 350, 0)
                         createPlatform()
-                        equipPet()
                         local t = 0
                         repeat 
                             task.wait(1)
@@ -1072,10 +1026,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "pizza_party")
                         removeItemByValue(BabyAilmentsArray, "pizza_party")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getAilments(PetAilmentsData)
-                        getBabyAilments(BabyAilmentsData)
                         taskName = "none"
                         local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
                         game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
@@ -1093,7 +1043,6 @@ if not _G.ScriptRunning then
                         --print("doing bored")
                         taskName = "🥱"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         if getgenv().PianoID then
                             game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer,getgenv().PianoID,"Seat1",{['cframe'] = CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, .5, 0))},fsys.get("pet_char_wrappers")[1]["char"])
@@ -1121,8 +1070,6 @@ if not _G.ScriptRunning then
                             end
                         end
                         removeItemByValue(PetAilmentsArray, "bored")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done bored")
@@ -1165,6 +1112,7 @@ if not _G.ScriptRunning then
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
                     end
+                    
                     -- Check if 'beach_party' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "beach_party") or table.find(BabyAilmentsArray, "beach_party") then
                         --print("going beach party")
@@ -1177,7 +1125,6 @@ if not _G.ScriptRunning then
                         task.wait(0.3)
                         createPlatform()
                         task.wait(0.3)
-                        equipPet()
                         local t = 0
                         repeat 
                             task.wait(1)
@@ -1195,10 +1142,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "beach_party")
                         removeItemByValue(BabyAilmentsArray, "beach_party")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getBabyAilments(BabyAilmentsData)
-                        getAilments(PetAilmentsData)
                         -- Check if petfarm is true
                         if not getgenv().PetFarmGuiStarter then
                             return -- Exit the function or stop the process if petfarm is false
@@ -1216,6 +1159,7 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done beach part")
                     end
+                    
                     -- Check if 'camping' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "camping") or table.find(BabyAilmentsArray, "camping") then
                         --print("going camping")
@@ -1228,7 +1172,6 @@ if not _G.ScriptRunning then
                         task.wait(0.3)
                         createPlatform()
                         task.wait(0.3)
-                        equipPet()
                         local t = 0
                         repeat 
                             task.wait(1)
@@ -1246,10 +1189,6 @@ if not _G.ScriptRunning then
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "camping")
                         removeItemByValue(BabyAilmentsArray, "camping")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getAilments(PetAilmentsData)
-                        getBabyAilments(BabyAilmentsData)
                         -- Check if petfarm is true
                         if not getgenv().PetFarmGuiStarter then
                             return -- Exit the function or stop the process if petfarm is false
@@ -1267,12 +1206,12 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done camping")
                     end      
+                    
                     -- Check if 'dirty' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "dirty") then
                         --print("doing dirty")
                         taskName = "🚿"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         if getgenv().ShowerID then
                             game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer,getgenv().ShowerID,"UseBlock",{['cframe'] = CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, .5, 0))},fsys.get("pet_char_wrappers")[1]["char"])
@@ -1300,12 +1239,11 @@ if not _G.ScriptRunning then
                                 --print("Not Enough money to buy shower")
                             end
                         end
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done dirty")
                     end  
+                    
                     if table.find(BabyAilmentsArray, "dirty") then
                         --print("doing dirty")
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
@@ -1341,16 +1279,15 @@ if not _G.ScriptRunning then
                                 print("Not Enough money to buy shower")
                             end
                         end
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getBabyAilments(BabyAilmentsData)
+                        equipPet()
                         --print("done dirty")
                     end
+                    
                     -- Check if 'sleepy' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "sleepy") then
                         --print("doing sleepy")
                         taskName = "😴"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         if getgenv().BedID then
                             game:GetService("ReplicatedStorage").API["HousingAPI/ActivateFurniture"]:InvokeServer(game:GetService("Players").LocalPlayer, getgenv().BedID, "UseBlock", {['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))}, fsys.get("pet_char_wrappers")[1]["char"])
@@ -1378,12 +1315,11 @@ if not _G.ScriptRunning then
                                 print("Not Enough money to buy bed.")
                             end
                         end
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done pet sleepy")
                     end  
+                    
                     if table.find(BabyAilmentsArray, "sleepy") then
                         --print("doing sleepy")
                         if getgenv().BedID then
@@ -1418,15 +1354,14 @@ if not _G.ScriptRunning then
                                 print("Not Enough money to buy bed.")
                             end
                         end
-                        BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                        getBabyAilments(BabyAilmentsData)
+                        equipPet()
                         --print("done baby sleepy")
-                    end      
+                    end     
+                    
                     -- Check if 'Potty' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "toilet") then
                         --print("going toilet")
                         taskName = "🧻"
-                        equipPet()
                         task.wait(3)
                         
                         -- potty
@@ -1457,18 +1392,16 @@ if not _G.ScriptRunning then
                                 print("Not Enough money to buy toilet")
                             end
                         end
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done potty")
                     end  
+                    
                     -- Check if 'mysteryTask' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "mystery") then
                         --print("going mysteryTask")
                         taskName = "❓"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         -- mystery task
                         get_mystery_task()
@@ -1482,75 +1415,83 @@ if not _G.ScriptRunning then
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
                         removeItemByValue(PetAilmentsArray, "mystery")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done mysteryTask")
                     end 
 
                     -- Check if 'pet me' is in the PetAilmentsArray
-                    -- if table.find(PetAilmentsArray, "pet_me") then
-                    --     --print("going pet me")
-                    --     taskName = "👋"
-                    --     equipPet()
-                    --     task.wait(3)
-                    --     -- pet me task
-                    --     -- Loop through all `ailments_list` in PlayerGui
-                    --     local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
-                    --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
-                    --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
-                    --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
-                    --             if container and container ~= "UIListLayout" then
-                    --                 for _, button in pairs(container:GetChildren()) do
-                    --                     FireSig(button) -- Click each ailment button
-                    --                     task.wait(3) -- Optional delay between clicks
-                    --                     if game:GetService("Players").LocalPlayer.PlayerGui.FocusPetApp.BackButton.Visible then
-                    --                         -- Handle the API call after interacting with all ailments
-                    --                         print("inside focus")
-                    --                         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-
-                    --                         local args = {
-                    --                             [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
-                    --                         }
-                    --                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ProgressPetMeAilment"):FireServer(unpack(args))
-
-                    --                         task.wait(1) -- Optional delay between clicks
-                    --                         -- Click the back button
-                    --                         local backButton = playerGui.FocusPetApp.BackButton
-                    --                         FireSig(backButton)
-                    --                         break
-                    --                     else
-                    --                         print("no back button found")
-                    --                     end
-                    --                 end
-                    --             end
-                    --         end
-                    --     end
-                    --     local t = 0
-                    --     repeat task.wait(1)
-                    --         t = 1 + t
-                    --         print('doing pet me')
-                    --     until not hasTargetAilment("pet_me") or t > 60
-                    --     removeItemByValue(PetAilmentsArray, "pet_me")
-                    --     local args = {
-                    --         [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                    --     }
+                    if table.find(PetAilmentsArray, "pet_me") then
+                        --print("going pet me")
+                        taskName = "👋"
+                        task.wait(3)
+                        -- pet me task
+                        -- Loop through all `ailments_list` in PlayerGui
+                        local player = game:GetService("Players").LocalPlayer
+                        local ailmentsList = player:FindFirstChild("PlayerGui") and player.PlayerGui:FindFirstChild("ailments_list")
                         
-                    --     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
-                    --     PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                    --     getAilments(PetAilmentsData)
-                    --     taskName = "none"
-                    --     equipPet()
-                    --     --print("done mysteryTask")
-                    -- end
+                        if ailmentsList then
+                            local container = ailmentsList:FindFirstChild("SurfaceGui") and ailmentsList.SurfaceGui:FindFirstChild("Container")
+                            
+                            if container then
+                                local children = container:GetChildren()
+                                
+                                -- Check if the second child exists
+                                if #children >= 2 then
+                                    local targetButton = children[2]
+                                    
+                                    -- Check if the element is a button
+                                    if targetButton:IsA("TextButton") or targetButton:IsA("ImageButton") then
+                                        -- Manually trigger the button's function
+                                        for _, connection in pairs(getconnections(targetButton.MouseButton1Click)) do
+                                            connection:Fire()
+                                        end
+                                    else
+                                        warn("The second child is not a clickable button.")
+                                    end
+                                else
+                                    warn("No second child found in Container.")
+                                end
+                            else
+                                warn("Container not found in SurfaceGui.")
+                            end
+                        else
+                            warn("ailments_list not found in PlayerGui.")
+                        end
+                        
+                        task.wait(2) 
+                        
+                        local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                        local currentPetUnique = ClientData.get("equip_manager").pets[1].unique
+                        
+                        local args = {
+                            [1] = currentPetUnique
+                        }
+                        
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ProgressPetMeAilment"):FireServer(unpack(args))
+                        
+                        task.wait(2) 
+                        
+                        local player = game:GetService("Players").LocalPlayer
+                        local backButton = player:FindFirstChild("PlayerGui") and player.PlayerGui:FindFirstChild("FocusPetApp") and player.PlayerGui.FocusPetApp:FindFirstChild("BackButton")
+                        
+                        if backButton and (backButton:IsA("TextButton") or backButton:IsA("ImageButton")) then
+                            -- Trigger all connected functions to the button's click event
+                            for _, connection in pairs(getconnections(backButton.MouseButton1Click)) do
+                                connection:Fire()
+                            end
+                        else
+                            warn("BackButton not found or is not a clickable button.")
+                        end
+                        equipPet()
+                    end
 
+                    
                     -- Check if 'catch' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "play") then
                         --print("going catch")
                         taskName = "🦴"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         for i = 1, 3 do -- Loop 3 times
                         -- Check if petfarm is true
@@ -1575,12 +1516,11 @@ if not _G.ScriptRunning then
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
                         removeItemByValue(PetAilmentsArray, "play")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done catch")
                     end  
+                   
                     -- Check if 'sick' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "sick") then
                         --print("going sick")
@@ -1603,8 +1543,6 @@ if not _G.ScriptRunning then
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
                         removeItemByValue(PetAilmentsArray, "sick")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         -- Check if petfarm is true
                         if not getgenv().PetFarmGuiStarter then
                             return -- Exit the function or stop the process if petfarm is false
@@ -1622,6 +1560,7 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done sick")
                     end
+                    
                     -- Check if 'walk' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "walk") then
                         -- Check if petfarm is true
@@ -1630,7 +1569,6 @@ if not _G.ScriptRunning then
                         end
                         --print("going walk")
                         taskName = "🚶"
-                        equipPet()
                         task.wait(3)
                         -- Get the player's character and HumanoidRootPart
                         local Player = game.Players.LocalPlayer
@@ -1682,12 +1620,11 @@ if not _G.ScriptRunning then
                         -- Reset to default walk speed
                         Humanoid.WalkSpeed = 16
                         removeItemByValue(PetAilmentsArray, "walk")
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done walk")
                     end  
+                    
                     -- Check if 'ride' is in the PetAilmentsArray
                     if table.find(PetAilmentsArray, "ride") then
                         -- Check if petfarm is true
@@ -1697,7 +1634,6 @@ if not _G.ScriptRunning then
                         --print("going ride")
                         taskName = "🏎️"
                         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                        equipPet()
                         task.wait(3)
                         for i,v in pairs(fsys.get("inventory").strollers) do
                             if v.id == 'stroller-default' then
@@ -1772,8 +1708,6 @@ if not _G.ScriptRunning then
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(fsys.get("pet_char_wrappers")[1]["char"])  
                         task.wait(0.3)              
-                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                        getAilments(PetAilmentsData)
                         taskName = "none"
                         equipPet()
                         --print("done ride")
