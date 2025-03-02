@@ -1,4 +1,4 @@
---REVAMP
+--REVAMP nbo print
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -924,10 +924,10 @@ if not _G.ScriptRunning then
         if firstPetAilments then
             for _, subValue in pairs(firstPetAilments) do
                 table.insert(FirstTableArray, subValue.kind)
-                print("First table ailment added: ", subValue.kind)
+                --print("First table ailment added: ", subValue.kind)
             end
         else
-            print("No ailments found for", petToEquip)
+            --print("No ailments found for", petToEquip)
         end
     
         -- Directly access the table for petToEquipSecond
@@ -936,7 +936,7 @@ if not _G.ScriptRunning then
             if secondPetAilments then
                 for _, subValue in pairs(secondPetAilments) do
                     table.insert(SecondTableArray, subValue.kind)
-                    print("Second table ailment added: ", subValue.kind)
+                    --print("Second table ailment added: ", subValue.kind)
                 end
             else
                 print("No ailments found for", petToEquipSecond)
@@ -946,7 +946,7 @@ if not _G.ScriptRunning then
         -- Print summary
         print("First table has", #FirstTableArray, "ailments")
         if getgenv().DoublePet then
-            print("Second table has", #SecondTableArray, "ailments")
+            --print("Second table has", #SecondTableArray, "ailments")
         end
     end
     
@@ -1162,7 +1162,7 @@ if not _G.ScriptRunning then
             getAilments(PetAilmentsData)
             taskName = "none"
             
-            print("done hungry")
+            --print("done hungry")
         end
         if table.find(FirstTableArray, "thirsty") or table.find(SecondTableArray, "thirsty") then
             --print("doing thirsty")
@@ -1280,7 +1280,7 @@ if not _G.ScriptRunning then
             getAilments(PetAilmentsData)
             taskName = "none"
             
-            print("done thirsty")
+            --print("done thirsty")
         end
     end
     
@@ -1447,7 +1447,7 @@ if not _G.ScriptRunning then
                     createPlatform()
                     task.wait(0.3)
                     
-                    print("done sick")
+                    --print("done sick")
                 end
     
                 -- Check if 'school' is in the FirstTableArray
@@ -1479,7 +1479,7 @@ if not _G.ScriptRunning then
                     createPlatform()
                     task.wait(0.3)
                     
-                    print("done school")
+                    --print("done school")
                 end
     
                 -- Check if 'salon' is in the FirstTableArray
@@ -1511,7 +1511,7 @@ if not _G.ScriptRunning then
                     createPlatform()
                     task.wait(0.3)
                     
-                    print("done salon")
+                    --print("done salon")
                 end
                 -- Check if 'pizza_party' is in the FirstTableArray
                 if table.find(FirstTableArray, "pizza_party") or table.find(SecondTableArray, "pizza_party") or table.find(BabyAilmentsArray, "pizza_party") then
@@ -1666,7 +1666,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done bored")
+                    --print("done bored")
                 end
                 if table.find(BabyAilmentsArray, "bored") then
                     --print("doing bored")
@@ -1732,7 +1732,7 @@ if not _G.ScriptRunning then
                     task.wait(0.3)
                     taskName = "none"
                     
-                    print("done beach part")
+                    --print("done beach part")
                 end
                 -- Check if 'camping' is in the FirstTableArray
                 if table.find(FirstTableArray, "camping") or table.find(SecondTableArray, "camping") or table.find(BabyAilmentsArray, "camping") then
@@ -1772,7 +1772,7 @@ if not _G.ScriptRunning then
                     task.wait(0.3)
                     taskName = "none"
                     
-                    print("done camping")
+                    --print("done camping")
                 end      
                 -- Check if 'dirty' is in the FirstTableArray
                 if table.find(FirstTableArray, "dirty") or table.find(SecondTableArray, "dirty") then
@@ -1893,7 +1893,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done dirty")
+                    --print("done dirty")
                 end
                 
                 if table.find(BabyAilmentsArray, "dirty") then
@@ -1921,7 +1921,7 @@ if not _G.ScriptRunning then
                     end
                     BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                     getBabyAilments(BabyAilmentsData)
-                    print("done dirty")
+                    --print("done dirty")
                 end
                 -- Check if 'sleepy' is in the FirstTableArray
                 if table.find(FirstTableArray, "sleepy") or table.find(SecondTableArray, "sleepy") then
@@ -2042,7 +2042,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done pet sleepy")
+                    --print("done pet sleepy")
                 end
                  
                 if table.find(BabyAilmentsArray, "sleepy") then
@@ -2069,7 +2069,7 @@ if not _G.ScriptRunning then
                     end
                     BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                     getBabyAilments(BabyAilmentsData)
-                    print("done baby sleepy")
+                    --print("done baby sleepy")
                 end      
                 -- Check if 'Potty' is in the FirstTableArray
                 if table.find(FirstTableArray, "toilet") or table.find(SecondTableArray, "toilet") then
@@ -2193,7 +2193,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done potty")
+                    --print("done potty")
                 end
                   
                 -- Check if 'mysteryTask' is in the FirstTableArray
@@ -2236,7 +2236,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done mysteryTask")
+                    --print("done mysteryTask")
                 end
                 
                 -- Check if 'pet me' is in the FirstTableArray
@@ -2391,7 +2391,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done catch")
+                    --print("done catch")
                 end
                 
                 -- Check if 'sick' is in the FirstTableArray
@@ -2512,7 +2512,7 @@ if not _G.ScriptRunning then
                     task.wait(0.3)
                     taskName = "none"
                     
-                    print("done sick")
+                    --print("done sick")
                 end
                 
                 -- Check if 'walk' is in the FirstTableArray
@@ -2574,7 +2574,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done walk")
+                    --print("done walk")
                 end
                 
                 -- Check if 'ride' is in the FirstTableArray
@@ -2736,7 +2736,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    print("done ride")
+                    --print("done ride")
                 end
                            
                 
