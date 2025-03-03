@@ -1,4 +1,4 @@
---REVAMP nbo print
+--REVAMP
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -505,39 +505,15 @@ if not _G.ScriptRunning then
     local levelOfPet = 0
     getgenv().petToEquip = nil
     local checkedPets = {} -- Store checked pet kinds
-    
-    local function CheckRarity(petname)
-        -- Skip if we've already checked this pet
-        if checkedPets[petname] then
-            return checkedPets[petname] -- Return cached result
-        end
-    
-        for _, z in pairs(game:GetService("ReplicatedStorage").SharedModules.ContentPacks:GetChildren()) do 
-            if z:IsA("Folder") and z:FindFirstChild("InventorySubDB") and z.InventorySubDB:FindFirstChild("Pets") then 
-                for _, Pet in pairs(require(z.InventorySubDB.Pets)) do 
-                    for _, b in pairs(Pet) do
-                        if tostring(b) == petname then
-                            checkedPets[petname] = Pet.rarity or "Unknown" -- Cache the result
-                            return checkedPets[petname]
-                        end
-                    end
-                end
-            end
-        end
-    
-        checkedPets[petname] = "Not Found" -- Cache missing pets too
-        return "Not Found"
-    end
-    --print("After check rarity")
+
     -- Get player pets
     getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
     
     for _, v in pairs(fsys.get("inventory").pets) do
-        local rarity = CheckRarity(v.kind) -- Get pet rarity
         local petLevel = v.properties.age -- Get pet level
     
         if v.kind ~= "practice_dog" then -- Ignore practice_dog
-            if rarity:lower() == "legendary" then
+            if v.kind then
                 -- Prioritize the highest-level legendary pet
                 if petLevel > highestLegendaryLevel then
                     highestLegendaryLevel = petLevel
@@ -588,30 +564,12 @@ if not _G.ScriptRunning then
         -- Ensure we have access to the game data
         getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
         
-        -- Make sure CheckRarity function exists
-        if not getgenv().CheckRarity then
-            getgenv().CheckRarity = function(petKind)
-                -- Add your rarity check logic here if it's not defined elsewhere
-                -- This is a placeholder - replace with your actual CheckRarity implementation
-                local rarities = {
-                    -- Example mapping of pet kinds to rarities
-                    ["dragon"] = "Legendary",
-                    ["unicorn"] = "Legendary",
-                    -- Add more pet types and rarities as needed
-                }
-                return rarities[petKind] or "Common"
-            end
-        end
-        
-        print("Starting pet equipment process...")
-        
         -- First pass: Find legendary pets
         for _, v in pairs(fsys.get("inventory").pets) do
-            local rarity = CheckRarity(v.kind)  -- Get pet rarity
             local petLevel = v.properties.age   -- Get pet level
             
             if v.kind ~= "practice_dog" then  -- Ignore practice_dog
-                if rarity:lower() == "legendary" then
+                if v.kind then
                     if petLevel > highestLegendaryLevel then
                         -- Move current best to second best if better one found
                         if getgenv().petToEquip then
@@ -637,10 +595,9 @@ if not _G.ScriptRunning then
         -- If no legendary pets found, look for other pets
         if not getgenv().petToEquip then
             for _, v in pairs(fsys.get("inventory").pets) do
-                local rarity = CheckRarity(v.kind)
                 local petLevel = v.properties.age
                 
-                if v.kind ~= "practice_dog" and rarity:lower() ~= "legendary" then
+                if v.kind ~= "practice_dog" then
                     if petLevel > highestOtherLevel then
                         -- Move current best to second best if better one found
                         if getgenv().petToEquip then
