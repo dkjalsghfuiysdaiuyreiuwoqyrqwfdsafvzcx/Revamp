@@ -1,5 +1,5 @@
 --REVAMP
---Fix play
+--super veiny
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2314,16 +2314,16 @@ if not _G.ScriptRunning then
                                 })
                             task.wait(4) -- Wait 4 seconds before next iteration
                         end
-                        repeat
-                            game:GetService("ReplicatedStorage")
-                            :WaitForChild("API")
-                            :WaitForChild("PetObjectAPI/CreatePetObject")
-                            :InvokeServer("__Enum_PetObjectCreatorType_1", {
-                                ["reaction_name"] = "ThrowToyReaction",
-                                ["unique_id"] = ToyToThrow
-                            })
-                            task.wait(4) -- Wait 4 seconds before next iteration
-                        until not hasTargetAilment("play", petToEquip)
+                        -- repeat
+                        --     game:GetService("ReplicatedStorage")
+                        --     :WaitForChild("API")
+                        --     :WaitForChild("PetObjectAPI/CreatePetObject")
+                        --     :InvokeServer("__Enum_PetObjectCreatorType_1", {
+                        --         ["reaction_name"] = "ThrowToyReaction",
+                        --         ["unique_id"] = ToyToThrow
+                        --     })
+                        --     task.wait(4) -- Wait 4 seconds before next iteration
+                        -- until not hasTargetAilment("play", petToEquip)
                         removeItemByValue(FirstTableArray, "play")
                     end
                 
@@ -2348,16 +2348,16 @@ if not _G.ScriptRunning then
                                 })
                             task.wait(4) -- Wait 4 seconds before next iteration
                         end
-                        repeat
-                            game:GetService("ReplicatedStorage")
-                            :WaitForChild("API")
-                            :WaitForChild("PetObjectAPI/CreatePetObject")
-                            :InvokeServer("__Enum_PetObjectCreatorType_1", {
-                                ["reaction_name"] = "ThrowToyReaction",
-                                ["unique_id"] = ToyToThrow
-                            })
-                            task.wait(4) -- Wait 4 seconds before next iteration
-                        until not hasTargetAilment("play", petToEquipSecond)
+                        -- repeat
+                        --     game:GetService("ReplicatedStorage")
+                        --     :WaitForChild("API")
+                        --     :WaitForChild("PetObjectAPI/CreatePetObject")
+                        --     :InvokeServer("__Enum_PetObjectCreatorType_1", {
+                        --         ["reaction_name"] = "ThrowToyReaction",
+                        --         ["unique_id"] = ToyToThrow
+                        --     })
+                        --     task.wait(4) -- Wait 4 seconds before next iteration
+                        -- until not hasTargetAilment("play", petToEquipSecond)
                         removeItemByValue(SecondTableArray, "play")
                     end
                 
@@ -2365,7 +2365,7 @@ if not _G.ScriptRunning then
                     getAilments(PetAilmentsData)
                     taskName = "none"
                     
-                    --print("done catch")
+                    print("done catch")
                 end
                 
                 -- Check if 'sick' is in the FirstTableArray
