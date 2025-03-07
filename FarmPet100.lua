@@ -1,5 +1,5 @@
 --REVAMP
---super veiny
+--super veiny1
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2198,90 +2198,90 @@ if not _G.ScriptRunning then
                 end
                 
                 -- Check if 'pet me' is in the FirstTableArray
-                if (table.find(FirstTableArray, "pet_me") or table.find(SecondTableArray, "pet_me")) and not getgenv().SkipPetMe then
-                    --print("going pet me")
-                    taskName = "👋"
+                -- if (table.find(FirstTableArray, "pet_me") or table.find(SecondTableArray, "pet_me")) and not getgenv().SkipPetMe then
+                --     --print("going pet me")
+                --     taskName = "👋"
                     
-                    task.wait(3)
+                --     task.wait(3)
     
-                    removeItemByValue(FirstTableArray, "pet_me")
-                    removeItemByValue(SecondTableArray, "pet_me")
+                --     removeItemByValue(FirstTableArray, "pet_me")
+                --     removeItemByValue(SecondTableArray, "pet_me")
                     
-                    -- local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
-                    -- local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                --     -- local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
+                --     -- local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
                     
-                    -- if table.find(FirstTableArray, "pet_me") then
-                    --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
-                    --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
-                    --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
-                    --             if container and container ~= "UIListLayout" then
-                    --                 for _, button in pairs(container:GetChildren()) do
-                    --                     FireSig(button) -- Click each ailment button
-                    --                     task.wait(3) -- Optional delay between clicks
-                    --                     if playerGui.FocusPetApp.BackButton.Visible then
-                    --                         print("inside focus")
-                    --                         local args = {
-                    --                             [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
-                    --                         }
-                    --                         game:GetService("ReplicatedStorage")
-                    --                             :WaitForChild("API")
-                    --                             :WaitForChild("AilmentsAPI/ProgressPetMeAilment")
-                    --                             :FireServer(unpack(args))
-                    --                         task.wait(1) -- Optional delay between clicks
-                    --                         local backButton = playerGui.FocusPetApp.BackButton
-                    --                         FireSig(backButton)
-                    --                         break
-                    --                     else
-                    --                         print("no back button found")
-                    --                     end
-                    --                 end
-                    --             end
-                    --         end
-                    --     end
-                    --     repeat task.wait(1)
-                    --     until not hasTargetAilment("pet_me", petToEquip)
-                    --     removeItemByValue(FirstTableArray, "pet_me")
-                    -- end
+                --     -- if table.find(FirstTableArray, "pet_me") then
+                --     --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
+                --     --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
+                --     --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
+                --     --             if container and container ~= "UIListLayout" then
+                --     --                 for _, button in pairs(container:GetChildren()) do
+                --     --                     FireSig(button) -- Click each ailment button
+                --     --                     task.wait(3) -- Optional delay between clicks
+                --     --                     if playerGui.FocusPetApp.BackButton.Visible then
+                --     --                         print("inside focus")
+                --     --                         local args = {
+                --     --                             [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
+                --     --                         }
+                --     --                         game:GetService("ReplicatedStorage")
+                --     --                             :WaitForChild("API")
+                --     --                             :WaitForChild("AilmentsAPI/ProgressPetMeAilment")
+                --     --                             :FireServer(unpack(args))
+                --     --                         task.wait(1) -- Optional delay between clicks
+                --     --                         local backButton = playerGui.FocusPetApp.BackButton
+                --     --                         FireSig(backButton)
+                --     --                         break
+                --     --                     else
+                --     --                         print("no back button found")
+                --     --                     end
+                --     --                 end
+                --     --             end
+                --     --         end
+                --     --     end
+                --     --     repeat task.wait(1)
+                --     --     until not hasTargetAilment("pet_me", petToEquip)
+                --     --     removeItemByValue(FirstTableArray, "pet_me")
+                --     -- end
                 
-                    -- if table.find(SecondTableArray, "pet_me") then
-                    --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
-                    --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
-                    --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
-                    --             if container and container ~= "UIListLayout" then
-                    --                 for _, button in pairs(container:GetChildren()) do
-                    --                     FireSig(button) -- Click each ailment button
-                    --                     task.wait(3) -- Optional delay between clicks
-                    --                     if playerGui.FocusPetApp.BackButton.Visible then
-                    --                         print("inside focus")
-                    --                         local args = {
-                    --                             [1] = ClientData.get("pet_char_wrappers")[2].pet_unique
-                    --                         }
-                    --                         game:GetService("ReplicatedStorage")
-                    --                             :WaitForChild("API")
-                    --                             :WaitForChild("AilmentsAPI/ProgressPetMeAilment")
-                    --                             :FireServer(unpack(args))
-                    --                         task.wait(1) -- Optional delay between clicks
-                    --                         local backButton = playerGui.FocusPetApp.BackButton
-                    --                         FireSig(backButton)
-                    --                         break
-                    --                     else
-                    --                         print("no back button found")
-                    --                     end
-                    --                 end
-                    --             end
-                    --         end
-                    --     end
-                    --     repeat task.wait(1)
-                    --     until not hasTargetAilment("pet_me", petToEquipSecond)
-                    --     removeItemByValue(SecondTableArray, "pet_me")
-                    -- end
+                --     -- if table.find(SecondTableArray, "pet_me") then
+                --     --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
+                --     --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
+                --     --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
+                --     --             if container and container ~= "UIListLayout" then
+                --     --                 for _, button in pairs(container:GetChildren()) do
+                --     --                     FireSig(button) -- Click each ailment button
+                --     --                     task.wait(3) -- Optional delay between clicks
+                --     --                     if playerGui.FocusPetApp.BackButton.Visible then
+                --     --                         print("inside focus")
+                --     --                         local args = {
+                --     --                             [1] = ClientData.get("pet_char_wrappers")[2].pet_unique
+                --     --                         }
+                --     --                         game:GetService("ReplicatedStorage")
+                --     --                             :WaitForChild("API")
+                --     --                             :WaitForChild("AilmentsAPI/ProgressPetMeAilment")
+                --     --                             :FireServer(unpack(args))
+                --     --                         task.wait(1) -- Optional delay between clicks
+                --     --                         local backButton = playerGui.FocusPetApp.BackButton
+                --     --                         FireSig(backButton)
+                --     --                         break
+                --     --                     else
+                --     --                         print("no back button found")
+                --     --                     end
+                --     --                 end
+                --     --             end
+                --     --         end
+                --     --     end
+                --     --     repeat task.wait(1)
+                --     --     until not hasTargetAilment("pet_me", petToEquipSecond)
+                --     --     removeItemByValue(SecondTableArray, "pet_me")
+                --     -- end
                 
-                    -- PetAilmentsData = ClientData.get_data()[game:GetService("Players").LocalPlayer.Name].ailments_manager.ailments
-                    -- getAilments(PetAilmentsData)
-                    -- taskName = "none"
-                    -- 
-                    --print("done pet me")
-                end
+                --     -- PetAilmentsData = ClientData.get_data()[game:GetService("Players").LocalPlayer.Name].ailments_manager.ailments
+                --     -- getAilments(PetAilmentsData)
+                --     -- taskName = "none"
+                --     -- 
+                --     --print("done pet me")
+                -- end
                 
                 -- Check if 'catch' is in the FirstTableArray
                 if table.find(FirstTableArray, "play") or table.find(SecondTableArray, "play") then
