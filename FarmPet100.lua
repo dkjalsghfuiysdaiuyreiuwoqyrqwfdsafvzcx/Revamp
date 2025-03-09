@@ -1,5 +1,5 @@
 --REVAMP
---play task updated 2
+--play task updated 3
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -881,7 +881,12 @@ if not _G.ScriptRunning then
         local firstPetAilments = tbl[petToEquip]
         if firstPetAilments then
             for _, subValue in pairs(firstPetAilments) do
-                table.insert(FirstTableArray, subValue.kind)
+                if subValue.kind == "mystery" or subValue.kind == "pet_me" then
+                    print("")
+                else
+                    table.insert(FirstTableArray, subValue.kind)
+                end
+                
                 --print("First table ailment added: ", subValue.kind)
             end
         else
@@ -893,7 +898,11 @@ if not _G.ScriptRunning then
             local secondPetAilments = tbl[petToEquipSecond]
             if secondPetAilments then
                 for _, subValue in pairs(secondPetAilments) do
-                    table.insert(SecondTableArray, subValue.kind)
+                    if subValue.kind == "mystery" or subValue.kind == "pet_me" then
+                        print("")
+                    else
+                        table.insert(SecondTableArray, subValue.kind)
+                    end
                     --print("Second table ailment added: ", subValue.kind)
                 end
             else
