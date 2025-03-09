@@ -1,5 +1,5 @@
 --REVAMP
---play task updated
+--play task updated 2
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2313,6 +2313,14 @@ if not _G.ScriptRunning then
                         -- until not hasTargetAilment("play", petToEquip)
                         local t = 0
                         repeat
+                            local args = {
+                                [1] = ToyToThrow,
+                                [2] = "START"
+                            }
+                            
+                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/ServerUseTool"):FireServer(unpack(args))
+                            task.wait(.1)
+                            
                             game:GetService("ReplicatedStorage")
                             :WaitForChild("API")
                             :WaitForChild("PetObjectAPI/CreatePetObject")
@@ -2320,7 +2328,8 @@ if not _G.ScriptRunning then
                                 ["reaction_name"] = "ThrowToyReaction",
                                 ["unique_id"] = ToyToThrow
                             })
-                            task.wait(3)
+                            
+                            task.wait(5)
                             t = t + 1
                         until not hasTargetAilment("play", petToEquip) or t == 60  -- Check only first table
                         removeItemByValue(FirstTableArray, "play")
@@ -2347,6 +2356,14 @@ if not _G.ScriptRunning then
                         -- until not hasTargetAilment("play", petToEquipSecond)
                         local t = 0
                         repeat
+                            local args = {
+                                [1] = ToyToThrow,
+                                [2] = "START"
+                            }
+                            
+                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/ServerUseTool"):FireServer(unpack(args))
+                            task.wait(.1)
+                            
                             game:GetService("ReplicatedStorage")
                             :WaitForChild("API")
                             :WaitForChild("PetObjectAPI/CreatePetObject")
@@ -2354,7 +2371,8 @@ if not _G.ScriptRunning then
                                 ["reaction_name"] = "ThrowToyReaction",
                                 ["unique_id"] = ToyToThrow
                             })
-                            task.wait(3)
+                            
+                            task.wait(5)
                             t = t + 1
                         until not hasTargetAilment("play", petToEquipSecond) or t == 60  -- Check only first table
                         removeItemByValue(SecondTableArray, "play")
