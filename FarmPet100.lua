@@ -1,5 +1,5 @@
 --REVAMP
---play task updated 3
+--sick task 3/17/25 6:16
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2415,80 +2415,20 @@ if not _G.ScriptRunning then
                     if table.find(FirstTableArray, "sick") then
     
                         
-                        local attempts = 0
-                        local success = false
-                        repeat
-                            attempts = attempts + 1
-                            local petChar = fsys.get("pet_char_wrappers")[1]["char"]
-                            local callSuccess, callResult = pcall(function()
-                                if not petChar then
-                                    error("petChar is nil")
-                                end
-                                return game:GetService("ReplicatedStorage")
-                                    :WaitForChild("API")
-                                    :WaitForChild("HousingAPI/ActivateInteriorFurniture")
-                                    :InvokeServer(
-                                        getgenv().HospitalBedID,
-                                        "Seat1",
-                                        {['cframe'] = CFrame.new(
-                                            game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, 0.5, 0)
-                                        )},
-                                        petChar
-                                    )
-                            end)
-                            if callSuccess then
-                                success = true
-                            else
-                                print("ActivateInteriorFurniture attempt " .. attempts .. " failed. Retrying...")
-                                task.wait(0.3)
-                            end
-                        until success or attempts >= 5
+                        local petChar = fsys.get("pet_char_wrappers")[1]["char"]
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateInteriorFurniture"):InvokeServer(getgenv().HospitalBedID, "Seat1", {['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))}, petChar)
                     
-                        if not success then
-                            warn("Failed to activate interior furniture after " .. attempts .. " attempts for first pet.")
-                        end
-                    
-                        task.wait(15)
+                        task.wait(20)
                         removeItemByValue(FirstTableArray, "sick")
                     end
                     
                     if table.find(SecondTableArray, "sick") then
     
                         
-                        local attempts = 0
-                        local success = false
-                        repeat
-                            attempts = attempts + 1
-                            local petChar = fsys.get("pet_char_wrappers")[2]["char"]
-                            local callSuccess, callResult = pcall(function()
-                                if not petChar then
-                                    error("petChar is nil")
-                                end
-                                return game:GetService("ReplicatedStorage")
-                                    :WaitForChild("API")
-                                    :WaitForChild("HousingAPI/ActivateInteriorFurniture")
-                                    :InvokeServer(
-                                        getgenv().HospitalBedID,
-                                        "Seat1",
-                                        {['cframe'] = CFrame.new(
-                                            game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0, 0.5, 0)
-                                        )},
-                                        petChar
-                                    )
-                            end)
-                            if callSuccess then
-                                success = true
-                            else
-                                print("ActivateInteriorFurniture attempt " .. attempts .. " failed. Retrying...")
-                                task.wait(0.3)
-                            end
-                        until success or attempts >= 5
+                        local petChar = fsys.get("pet_char_wrappers")[2]["char"]
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateInteriorFurniture"):InvokeServer(getgenv().HospitalBedID, "Seat1", {['cframe']=CFrame.new(game:GetService("Players").LocalPlayer.Character.Head.Position + Vector3.new(0,.5,0))}, petChar)
                     
-                        if not success then
-                            warn("Failed to activate interior furniture after " .. attempts .. " attempts for second pet.")
-                        end
-                    
-                        task.wait(15)
+                        task.wait(20)
                         removeItemByValue(SecondTableArray, "sick")
                     end
                     
