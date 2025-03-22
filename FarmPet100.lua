@@ -734,6 +734,7 @@ if not _G.ScriptRunning then
     getgenv().WaterID = GetFurniture("PetWaterBowl")
     getgenv().FoodID = GetFurniture("PetFoodBowl")
     getgenv().ToiletID = GetFurniture("Toilet")
+    getgenv().LureID = GetFurniture("Lures2023NormalLure")
     
     -- Get current money
     local startingMoney = getCurrentMoney()
@@ -804,6 +805,21 @@ if not _G.ScriptRunning then
                 print("Not Enough money to buy toilet")
             end
         end
+        if LureID == nil then
+            local args = {
+                [1] = {
+                    [1] = {
+                        ["kind"] = "lures_2023_normal_lure",
+                        ["properties"] = {
+                            ["cframe"] = CFrame.new(14.699951171875, 0, -24.599609375, 1, -3.82137093032941e-15, 8.742277657347586e-08, 3.82137093032941e-15, 1, 0, -8.742277657347586e-08, 0, 1)
+                        }
+                    }
+                }
+            }
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/BuyFurnitures"):InvokeServer(unpack(args))   
+            getgenv().LureID = GetFurniture("Lures2023NormalLure")
+        end 
     end
     
     -- Helper function to remove an item from a table by its value
@@ -1315,7 +1331,11 @@ if not _G.ScriptRunning then
         -- NO EVENT RIGHT NOW
         -- #########################################
         
+        -- ########### LURE BAIT
+        local LureBait = getLureBait()
+        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", {["bait_unique"] = LureBait}, workspace:WaitForChild("PlayerCharacters"):WaitForChild(game:GetService("Players").LocalPlayer))
         
+        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", false, workspace:WaitForChild("PlayerCharacters"):WaitForChild(game:GetService("Players").LocalPlayer))
     
         local Players = game:GetService("Players")
         local player = Players.LocalPlayer
