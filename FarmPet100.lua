@@ -1,5 +1,4 @@
---REVAMP
---sick task 3/17/25 6:16
+--FIXED AUTO PLAY
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -35,6 +34,16 @@ if not _G.ScriptRunning then
     end)
 
     print('Anti-Rejoin', 'Teleportation prevention is now active.')
+    
+    task.wait(2) -- idk how much
+
+    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
+    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+
+    sound.FX:play("BambooButton")
+    UI.set_app_visibility("NewsApp", false)
+
+    task.wait(5)
 
     
     --print("FarmPet Now running!")
@@ -1345,11 +1354,17 @@ if not _G.ScriptRunning then
         -- NO EVENT RIGHT NOW
         -- #########################################
         
-        -- ########### LURE BAIT
-        local LureBait = getLureBait()
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", {["bait_unique"] = LureBait}, workspace:WaitForChild("PlayerCharacters"):WaitForChild(game:GetService("Players").LocalPlayer))
+        local success, err = pcall(function()
+            -- ########### LURE BAIT
+            local LureBait = getLureBait()
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", {["bait_unique"] = LureBait}, fsys.get("char_wrapper")["char"])
+            
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", false, fsys.get("char_wrapper")["char"])
+        end)
         
-        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/ActivateFurniture"):InvokeServer(game:GetService("Players").LocalPlayer, getgenv().LureID, "UseBlock", false, workspace:WaitForChild("PlayerCharacters"):WaitForChild(game:GetService("Players").LocalPlayer))
+        if not success then
+            warn("An error occurred: " .. err)
+        end
     
         local Players = game:GetService("Players")
         local player = Players.LocalPlayer
