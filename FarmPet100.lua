@@ -1284,6 +1284,20 @@ if not _G.ScriptRunning then
     
         --print("EatDrink executed successfully without errors.")
     end
+
+
+    local function getLureBait()
+        local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+        local FoodData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
+        
+        for x,y in pairs(FoodData) do
+            for i,j in pairs(y) do
+                if y.id == "ice_dimension_2025_ice_soup_bait" then
+                    return y.unique
+                end
+            end
+        end
+    end
     
     
     
