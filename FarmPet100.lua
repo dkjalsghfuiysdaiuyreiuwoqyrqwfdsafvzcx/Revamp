@@ -1,4 +1,5 @@
---FIXED AUTO PLAY
+--REVAMP
+--AUTO PLAY 3/23/25 9:06am
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -34,16 +35,6 @@ if not _G.ScriptRunning then
     end)
 
     print('Anti-Rejoin', 'Teleportation prevention is now active.')
-    
-    task.wait(2) -- idk how much
-
-    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
-    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-
-    sound.FX:play("BambooButton")
-    UI.set_app_visibility("NewsApp", false)
-
-    task.wait(5)
 
     
     --print("FarmPet Now running!")
@@ -72,9 +63,20 @@ if not _G.ScriptRunning then
     
     --print("After dehash")
     
+    task.wait(2) -- idk how much
+
+    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
+    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+
+    sound.FX:play("BambooButton")
+    UI.set_app_visibility("NewsApp", false)
+
+    task.wait(5)
+    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
+    sound.FX:play("BambooButton")
+    UI.set_app_visibility("DailyLoginApp", false)
     
-    
-    task.wait(1)
+    task.wait(3)
     local xc = 0
     local NewAcc = false
     local HasTradeLic = false
@@ -99,52 +101,13 @@ if not _G.ScriptRunning then
         end)
     end
     
-    
-    local RunService = game:GetService("RunService")
-    local DoneAutoPlay = false
+
     -- Connect to Heartbeat
     local debounceNewsApp = false
     local debounceRoleChooser = false
     local debounceRobuxDialog = false
     local debounceLoginApp = false
     
-    RunService.Heartbeat:Connect(function()
-        -- Handle NewsApp
-        if game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.Enabled and not debounceNewsApp then
-            debounceNewsApp = true
-            FireSig(game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.EnclosingFrame.MainFrame.Buttons.PlayButton)
-            task.wait(1)
-        elseif not game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.Enabled then
-            debounceNewsApp = false
-        end
-        
-        -- Handle RoleChooser dialog
-        if game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Visible and not debounceRoleChooser then
-            debounceRoleChooser = true
-            FireSig(game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Baby)
-            task.wait(1)
-        elseif not game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RoleChooserDialog.Visible then
-            debounceRoleChooser = false
-        end
-        
-        -- Handle RobuxProduct dialog
-        if game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Visible and not debounceRobuxDialog then
-            debounceRobuxDialog = true
-            game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Visible = false
-            task.wait(1)
-        elseif not game:GetService("Players").LocalPlayer.PlayerGui.DialogApp.Dialog.RobuxProductDialog.Visible then
-            debounceRobuxDialog = false
-        end
-        
-        -- Handle DailyLoginApp
-        if game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Enabled and not debounceLoginApp then
-            debounceLoginApp = true
-            FireSig(game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Frame.Body.Buttons.ClaimButton)
-            task.wait(1)
-        elseif not game:GetService("Players").LocalPlayer.PlayerGui.DailyLoginApp.Enabled then
-            debounceLoginApp = false
-        end
-    end)
     --print("After runservice")
     
     local NewAcc = false
