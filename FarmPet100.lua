@@ -1,5 +1,5 @@
 --REVAMP
---Working Sakura 10:37pm
+--Working Sakura 10:40pm
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2093,63 +2093,65 @@ if not _G.ScriptRunning then
     local RunService = game:GetService("RunService")
 
     RunService.Heartbeat:Connect(function()
-        local player = game:GetService("Players").LocalPlayer
-        local gui = player:FindFirstChild("PlayerGui")
-        local dialogApp = gui and gui:FindFirstChild("DialogApp")
-
-        if dialogApp and not InSakura then
-            local text = dialogApp.Dialog.NormalDialog.Info.TextLabel.Text
-            if text == "Sakura Swoop is starting soon! Teleport there now?" then
-                InSakura = true
-                getgenv().PetFarm = false
-
-                teleportToMainmap()
-                task.wait(5)
-                teleportPlayerNeeds(74.4566879272461, 41.194610595703125, -1571.404296875)
+        if not getgenv().NoSakuraFarm then
+            local player = game:GetService("Players").LocalPlayer
+            local gui = player:FindFirstChild("PlayerGui")
+            local dialogApp = gui and gui:FindFirstChild("DialogApp")
+    
+            if dialogApp and not InSakura then
+                local text = dialogApp.Dialog.NormalDialog.Info.TextLabel.Text
+                if text == "Sakura Swoop is starting soon! Teleport there now?" then
+                    InSakura = true
+                    getgenv().PetFarm = false
+    
+                    teleportToMainmap()
+                    task.wait(5)
+                    teleportPlayerNeeds(74.4566879272461, 41.194610595703125, -1571.404296875)
+                end
             end
-        end
-
-        -- Wait until we are inside the BlossomShakedownInterior
-        if InSakura and not InShakeDown and workspace.Interiors:FindFirstChild("BlossomShakedownInterior") then
-            InShakeDown = true
-            task.wait(2)
-
-            local rings = workspace.Interiors.BlossomShakedownInterior:WaitForChild("Rings")
-            local messageServer = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MinigameAPI/MessageServer")
-
-            local count = 0
-            for _, ring in ipairs(rings:GetChildren()) do
-                if count >= 40 then break end
-                messageServer:FireServer("blossom_shakedown", "petal_ring_flown_through", ring.Name)
-                count += 1
+    
+            -- Wait until we are inside the BlossomShakedownInterior
+            if InSakura and not InShakeDown and workspace.Interiors:FindFirstChild("BlossomShakedownInterior") then
+                InShakeDown = true
+                task.wait(2)
+    
+                local rings = workspace.Interiors.BlossomShakedownInterior:WaitForChild("Rings")
+                local messageServer = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MinigameAPI/MessageServer")
+    
+                local count = 0
+                for _, ring in ipairs(rings:GetChildren()) do
+                    if count >= 40 then break end
+                    messageServer:FireServer("blossom_shakedown", "petal_ring_flown_through", ring.Name)
+                    count += 1
+                end
             end
-        end
-
-        -- Wait until player is back in MainMap and reward UI is shown
-        if InShakeDown and not FinishedMinigame then
-            local success = pcall(function()
-                if workspace.Interiors:FindFirstChild("MainMap!Default") then
-                    local rewardsApp = gui and gui:FindFirstChild("MinigameRewardsApp")
-                    if rewardsApp and rewardsApp.Body.Visible then
-                        task.wait(2)
-                        game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("School")
-                        teleportPlayerNeeds(0, 350, 0)
-                        getgenv().PetFarm = true
-                        
-                        -- Reset all flags
-                        InSakura = false
-                        InShakeDown = false
-                        FinishedMinigame = false
-                        
-                        if UI then
-                            UI.set_app_visibility("MinigameRewardsApp", false)
+    
+            -- Wait until player is back in MainMap and reward UI is shown
+            if InShakeDown and not FinishedMinigame then
+                local success = pcall(function()
+                    if workspace.Interiors:FindFirstChild("MainMap!Default") then
+                        local rewardsApp = gui and gui:FindFirstChild("MinigameRewardsApp")
+                        if rewardsApp and rewardsApp.Body.Visible then
+                            task.wait(2)
+                            game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("School")
+                            teleportPlayerNeeds(0, 350, 0)
+                            getgenv().PetFarm = true
+                            
+                            -- Reset all flags
+                            InSakura = false
+                            InShakeDown = false
+                            FinishedMinigame = false
+                            
+                            if UI then
+                                UI.set_app_visibility("MinigameRewardsApp", false)
+                            end
                         end
                     end
+                end)
+                if not success then
+                    -- If MainMap or rewards not ready yet, wait a bit
+                    task.wait(1)
                 end
-            end)
-            if not success then
-                -- If MainMap or rewards not ready yet, wait a bit
-                task.wait(1)
             end
         end
     end)
