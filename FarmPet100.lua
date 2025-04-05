@@ -1,5 +1,5 @@
 --REVAMP
---SAKURA FARM 8:15 PM
+--SAKURA FARM 9:33 PM
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -385,9 +385,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
             task.wait(2)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(20)
-            local Player = game.Players.LocalPlayer
-            Player:Kick("Tutorial completed please restart game!")
+            task.wait(10)
         end)
         if not success then
             warn("Error in first task: " .. tostring(err))
@@ -653,9 +651,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
             task.wait(2)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(20)
-            local Player = game.Players.LocalPlayer
-            Player:Kick("Tutorial completed please restart game!")
+            task.wait(10)
         end)
         if not success then
             warn("Error in second task: " .. tostring(err))
@@ -949,9 +945,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
             task.wait(2)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(20)
-            local Player = game.Players.LocalPlayer
-            Player:Kick("Tutorial completed please restart game!")
+            task.wait(10)
         end)
         if not success then
             warn("Error in first task: " .. tostring(err))
@@ -1219,9 +1213,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
             task.wait(2)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(20)
-            local Player = game.Players.LocalPlayer
-            Player:Kick("Tutorial completed please restart game!")
+            task.wait(10)
         end)
         if not success then
             warn("Error in second task: " .. tostring(err))
