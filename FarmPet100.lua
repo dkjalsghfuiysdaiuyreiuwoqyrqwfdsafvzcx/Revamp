@@ -1,5 +1,5 @@
 --REVAMP
---Working Sakura 10:23pm
+--Working Sakura 10:37pm
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2227,7 +2227,7 @@ if not _G.ScriptRunning then
                 print("inside petfarm")
                 repeat task.wait(5)
                     task.wait(1)
-                    UI.set_app_visibility("DialogApp", false)
+                    -- UI.set_app_visibility("DialogApp", false)
                     print("inside repeat oten")
                     PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
                     BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
