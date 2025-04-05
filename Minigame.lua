@@ -2,6 +2,31 @@ if not _G.ScriptRunning then
     _G.ScriptRunning = true
     local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
     local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+
+
+    local router
+    for i, v in next, getgc(true) do
+        if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
+            router = v
+        end
+    end
+    local function rename(remotename, hashedremote)
+        hashedremote.Name = remotename
+    end
+    -- Apply renaming to upvalues of the RouterClient.init function
+    table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
+
+    --print("After dehash")
+
+    task.wait(2) -- idk how much
+
+    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
+    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+
+    sound.FX:play("BambooButton")
+    UI.set_app_visibility("NewsApp", false)
+
+    
     local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
     local Cash = ClientData.get_data()[game.Players.LocalPlayer.Name].money
     if not hookmetamethod then
@@ -1160,27 +1185,7 @@ if not _G.ScriptRunning then
     local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
     local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
 
-    local router
-    for i, v in next, getgc(true) do
-        if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
-            router = v
-        end
-    end
-    local function rename(remotename, hashedremote)
-        hashedremote.Name = remotename
-    end
-    -- Apply renaming to upvalues of the RouterClient.init function
-    table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
 
-    --print("After dehash")
-
-    task.wait(2) -- idk how much
-
-    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
-    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-
-    sound.FX:play("BambooButton")
-    UI.set_app_visibility("NewsApp", false)
 
     task.wait(5)
     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
