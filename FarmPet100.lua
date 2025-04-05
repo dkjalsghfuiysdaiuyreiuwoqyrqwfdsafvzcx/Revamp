@@ -1,5 +1,5 @@
 --REVAMP
---Working Sakura 9:56pm
+--Working Sakura 10:23pm
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -2159,7 +2159,7 @@ if not _G.ScriptRunning then
     _G.FarmTypeRunning = "none"
     print("After taas startpetfarm")
     local function startPetFarm()
-        -- game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
+        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer("Babies",{["dont_send_back_home"] = true, ["source_for_logging"] = "avatar_editor"})
         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/Spawn"):InvokeServer()
         task.wait(5)
         buyItems()
