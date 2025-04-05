@@ -1,3 +1,4 @@
+-- added anti afk
 if not _G.ScriptRunning then
     _G.ScriptRunning = true
 
@@ -30,7 +31,15 @@ if not _G.ScriptRunning then
 
     print('Anti-Rejoin', 'Teleportation prevention is now active.')
 
-
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local virtualUser = game:GetService("VirtualUser")
+    
+    Player.Idled:Connect(function()
+        virtualUser:CaptureController()
+        virtualUser:ClickButton2(Vector2.new())
+    end)
+    
     --print("FarmPet Now running!")
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
