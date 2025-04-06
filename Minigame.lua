@@ -18,14 +18,35 @@ if not _G.ScriptRunning then
 
     --print("After dehash")
 
-    task.wait(2) -- idk how much
+    task.wait(5) -- idk how much
 
     local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
     local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
 
     sound.FX:play("BambooButton")
     UI.set_app_visibility("NewsApp", false)
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local virtualUser = game:GetService("VirtualUser")
+    
+    Player.Idled:Connect(function()
+        virtualUser:CaptureController()
+        virtualUser:ClickButton2(Vector2.new())
+    end)
+    
+    --print("FarmPet Now running!")
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local CoreGui = game:GetService("CoreGui")
+    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
+    local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
 
+
+
+    task.wait(5)
+    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
+    sound.FX:play("BambooButton")
+    UI.set_app_visibility("DailyLoginApp", false)
     
     local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
     local Cash = ClientData.get_data()[game.Players.LocalPlayer.Name].money
@@ -1169,28 +1190,7 @@ if not _G.ScriptRunning then
         end
     end)
 
-    local Players = game:GetService("Players")
-    local Player = Players.LocalPlayer
-    local virtualUser = game:GetService("VirtualUser")
-    
-    Player.Idled:Connect(function()
-        virtualUser:CaptureController()
-        virtualUser:ClickButton2(Vector2.new())
-    end)
-    
-    --print("FarmPet Now running!")
-    local Players = game:GetService("Players")
-    local Player = Players.LocalPlayer
-    local CoreGui = game:GetService("CoreGui")
-    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
-    local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
 
-
-
-    task.wait(5)
-    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
-    sound.FX:play("BambooButton")
-    UI.set_app_visibility("DailyLoginApp", false)
 
     getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
     local function teleportToMainmap()
