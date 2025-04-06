@@ -1,8 +1,34 @@
 if not _G.ScriptRunning then
     _G.ScriptRunning = true
-    local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
-    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
 
+    if not hookmetamethod then
+        return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
+    end
+
+    local TeleportService = game:GetService("TeleportService")
+    local oldIndex
+    local oldNamecall
+
+    -- Hook __index to intercept TeleportService method calls
+    oldIndex = hookmetamethod(game, "__index", function(self, key)
+        if self == TeleportService and (key:lower() == "teleport" or key == "TeleportToPlaceInstance") then
+            return function()
+                error("Teleportation blocked by anti-teleport script.", 2)
+            end
+        end
+        return oldIndex(self, key)
+    end)
+
+    -- Hook __namecall to intercept method calls like TeleportService:Teleport(...)
+    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
+        local method = getnamecallmethod()
+        if self == TeleportService and (method:lower() == "teleport" or method == "TeleportToPlaceInstance") then
+            return
+        end
+        return oldNamecall(self, ...)
+    end)
+
+    print('Anti-Rejoin', 'Teleportation prevention is now active.')
 
     local router
     for i, v in next, getgc(true) do
@@ -15,11 +41,7 @@ if not _G.ScriptRunning then
     end
     -- Apply renaming to upvalues of the RouterClient.init function
     table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
-
-    --print("After dehash")
-
-    task.wait(5) -- idk how much
-
+    
     local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
     local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
 
@@ -50,34 +72,7 @@ if not _G.ScriptRunning then
     
     local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
     local Cash = ClientData.get_data()[game.Players.LocalPlayer.Name].money
-    if not hookmetamethod then
-        return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
-    end
 
-    local TeleportService = game:GetService("TeleportService")
-    local oldIndex
-    local oldNamecall
-
-    -- Hook __index to intercept TeleportService method calls
-    oldIndex = hookmetamethod(game, "__index", function(self, key)
-        if self == TeleportService and (key:lower() == "teleport" or key == "TeleportToPlaceInstance") then
-            return function()
-                error("Teleportation blocked by anti-teleport script.", 2)
-            end
-        end
-        return oldIndex(self, key)
-    end)
-
-    -- Hook __namecall to intercept method calls like TeleportService:Teleport(...)
-    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-        local method = getnamecallmethod()
-        if self == TeleportService and (method:lower() == "teleport" or method == "TeleportToPlaceInstance") then
-            return
-        end
-        return oldNamecall(self, ...)
-    end)
-
-    print('Anti-Rejoin', 'Teleportation prevention is now active.')
 
     local NewAcc = false
     local HasTradeLic = false
