@@ -350,7 +350,7 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
             task.wait(2)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(10)
+            task.wait(2)
         end)
         if not success then
             warn("Error in first task: " .. tostring(err))
