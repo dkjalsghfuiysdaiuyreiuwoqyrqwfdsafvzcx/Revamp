@@ -226,6 +226,15 @@ if not _G.ScriptRunning then
         virtualUser:ClickButton2(Vector2.new())
     end)
 
+    task.spawn(function()
+        while true do
+            task.wait(1200) -- every 20 minutes 
+            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+            print("Anti-AFK jump")
+        end
+    end)
+
+
     -- ###########################################################################################################
 
 
