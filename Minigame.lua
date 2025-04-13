@@ -650,8 +650,14 @@ if not _G.ScriptRunning then
     end
 
 
-
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    
     getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
+    
+    
     local function teleportToMainmap()
         local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
         local OrigThreadID = getthreadidentity()
@@ -663,67 +669,142 @@ if not _G.ScriptRunning then
         })
         setidentity(OrigThreadID)
     end
-
-    local function teleportPlayerNeeds(x, y, z)
-        local Player = game.Players.LocalPlayer
-        if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-            Player.Character.HumanoidRootPart.CFrame = CFrame.new(x, y, z) 
-        else
-            --print("Player or character not found!")
-        end
+    
+    teleportToMainmap()
+    task.wait(5)
+    
+    local toykyoZone = workspace.Interiors["MainMap!Default"].TearUpToykyoJoinZone
+    local sakuraZone = workspace.Interiors["MainMap!Default"].BlossomShakedownJoinZone
+    
+    local function getTimeLeft(path)
+        local label = path and path:FindFirstChild("TimerLabel")
+        if not label then return nil end
+        local m, s = label.Text:match("(%d+):(%d+)")
+        return m and s and (tonumber(m) * 60 + tonumber(s)) or nil
     end
-    local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-    local InShakeDown = false 
-    local FinishedMinigame = false
-    local RunService = game:GetService("RunService")
-
-        local player = game:GetService("Players").LocalPlayer
+    
+    -- 🧠 Function 1: Monitor timer and teleport
+    task.spawn(function()
+        local nextZone = nil
+    
+        while true do
+            task.wait(1)
+    
+            local interiors = workspace:FindFirstChild("Interiors")
+            local mainMap = interiors and interiors:FindFirstChild("MainMap!Default")
+            local toyZone = mainMap and mainMap:FindFirstChild("TearUpToykyoJoinZone")
+            local sakZone = mainMap and mainMap:FindFirstChild("BlossomShakedownJoinZone")
+    
+            local toyTime = toyZone and getTimeLeft(toyZone:FindFirstChild("Billboard") and toyZone.Billboard:FindFirstChild("BillboardGui"))
+            local sakTime = sakZone and getTimeLeft(sakZone:FindFirstChild("Billboard") and sakZone.Billboard:FindFirstChild("BillboardGui"))
+    
+            print('time check ', toyTime, ' ', sakTime)
+    
+            if (nextZone == "Toykyo" or nextZone == nil) and toyTime and toyTime <= 180 then
+                hrp.CFrame = CFrame.new(Vector3.new(117.42, 30.84, -1456.33))
+                nextZone = "Sakura"
+            elseif (nextZone == "Sakura" or nextZone == nil) and sakTime and sakTime <= 180 then
+                hrp.CFrame = CFrame.new(Vector3.new(74.45, 41.19, -1571.40))
+                nextZone = "Toykyo"
+            end
+        end
+    end)
+    
+    -- 💥 Function 2: Loop through StaticMap and fire events
+    task.spawn(function()
+        while true do
+            task.wait(1)
+    
+            local targetKey = nil -- 🔄 Reset every loop
+    
+            for _, instance in ipairs(workspace.StaticMap:GetChildren()) do
+                local name = instance.Name
+                if name:match("^tear_up_toykyo::.+_minigame_state$") then
+                    targetKey = name
+                    break
+                end
+            end
+    
+            if targetKey then
+                task.wait(10)
+                local baseArg = targetKey:gsub("_minigame_state$", "")
+                
+                for x = 1, 2500 do
+                    if not targetKey:match("^tear_up_toykyo::") then
+                        warn("Stopped inner loop: targetKey no longer matches.")
+                        break
+                    end
+    
+                    local args = {
+                        [1] = baseArg,
+                        [2] = "building_destroyed",
+                        [3] = x
+                    }
+    
+                    game:GetService("ReplicatedStorage")
+                        :WaitForChild("API")
+                        :WaitForChild("MinigameAPI/MessageServer")
+                        :FireServer(unpack(args))
+                end
+    
+            else
+                warn("Could not find matching StaticMap key!")
+                local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+                UI.set_app_visibility("MinigameNewsPaperApp", false)
+            end
+        end
+    end)
+    
+    
+    task.spawn(function()
+        local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+        local InShakeDown = false 
+        local FinishedMinigame = false
+        local RunService = game:GetService("RunService")
         local gui = player:FindFirstChild("PlayerGui")
         local dialogApp = gui and gui:FindFirstChild("DialogApp")
-
-                teleportToMainmap()
-                task.wait(5)
-                teleportPlayerNeeds(74.4566879272461, 41.194610595703125, -1571.404296875)
-    while true do
-        -- Wait until we are inside the BlossomShakedownInterior
-        if not InShakeDown and workspace.Interiors:FindFirstChild("BlossomShakedownInterior") then
-            InShakeDown = true
-            task.wait(2)
-
-            local rings = workspace.Interiors.BlossomShakedownInterior:WaitForChild("Rings")
-            local messageServer = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MinigameAPI/MessageServer")
-
-            local count = 0
-            for _, ring in ipairs(rings:GetChildren()) do
-                if count >= 40 then break end
-                messageServer:FireServer("blossom_shakedown", "petal_ring_flown_through", ring.Name)
-                count += 1
+        while true do
+            -- Wait until we are inside the BlossomShakedownInterior
+            if not InShakeDown and workspace.Interiors:FindFirstChild("BlossomShakedownInterior") then
+                InShakeDown = true
+                task.wait(2)
+        
+                local rings = workspace.Interiors.BlossomShakedownInterior:WaitForChild("Rings")
+                local messageServer = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MinigameAPI/MessageServer")
+        
+                local count = 0
+                for _, ring in ipairs(rings:GetChildren()) do
+                    if count >= 40 then break end
+                    messageServer:FireServer("blossom_shakedown", "petal_ring_flown_through", ring.Name)
+                    count += 1
+                end
             end
-        end
-
-        -- Wait until player is back in MainMap and reward UI is shown
-        if InShakeDown and not FinishedMinigame then
-            local success = pcall(function()
-                if workspace.Interiors:FindFirstChild("MainMap!Default") then
-                    local rewardsApp = gui and gui:FindFirstChild("MinigameRewardsApp")
-                    if rewardsApp and rewardsApp.Body.Visible then
-                        task.wait(2)
-                        
-                        -- Reset all flags
-                        InShakeDown = false
-                        FinishedMinigame = false
-                        
-                        if UI then
-                            UI.set_app_visibility("MinigameRewardsApp", false)
+        
+            -- Wait until player is back in MainMap and reward UI is shown
+            if InShakeDown and not FinishedMinigame then
+                local success = pcall(function()
+                    if workspace.Interiors:FindFirstChild("MainMap!Default") then
+                        local rewardsApp = gui and gui:FindFirstChild("MinigameRewardsApp")
+                        if rewardsApp and rewardsApp.Body.Visible then
+                            task.wait(2)
+                            
+                            -- Reset all flags
+                            InShakeDown = false
+                            FinishedMinigame = false
+                            
+                            if UI then
+                                UI.set_app_visibility("MinigameRewardsApp", false)
+                            end
                         end
                     end
+                end)
+                if not success then
+                    -- If MainMap or rewards not ready yet, wait a bit
+                    task.wait(1)
                 end
-            end)
-            if not success then
-                -- If MainMap or rewards not ready yet, wait a bit
-                task.wait(1)
             end
+            task.wait(1)
         end
-        task.wait(1)
-    end
+        
+    end)
 end
