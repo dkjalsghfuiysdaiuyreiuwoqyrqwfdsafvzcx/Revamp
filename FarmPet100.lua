@@ -1,6 +1,6 @@
 --REVAMP
 --AUTO PLAY 4/2/2025 7:41am
--- 4/30/2025 5:35 PM
+-- 4/30/2025 10:06AM
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -181,6 +181,8 @@ if not _G.ScriptRunning then
             task.wait(0.1)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Tutorial Ailment Spawned")
             task.wait(0.1)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/AddHungryAilmentToTutorialEgg"):FireServer()
+            task.wait(0.1)
             local args = { [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg") }
             task.wait(0.1)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/FocusPet"):FireServer(unpack(args))
@@ -331,6 +333,8 @@ if not _G.ScriptRunning then
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/AddTutorialQuest"):FireServer()
             task.wait(0.1)
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer("Tutorial Ailment Spawned")
+            task.wait(0.1)
+            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/AddHungryAilmentToTutorialEgg"):FireServer()
             task.wait(0.1)
             local args = { [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg") }
             game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/FocusPet"):FireServer(unpack(args))
