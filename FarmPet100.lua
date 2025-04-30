@@ -1,6 +1,6 @@
 --REVAMP
 --AUTO PLAY 4/2/2025 7:41am
--- 4/30/2025 12:06AM
+-- 4/30/2025 10:06AM
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -424,6 +424,28 @@ if not _G.ScriptRunning then
         end
         return currentMoney
     end
+
+    task.spawn(function()
+        local lastMoney = getCurrentMoney()
+        local unchangedTime = 0
+    
+        while true do
+            task.wait(60) -- wait 1 minute
+            local currentMoney = getCurrentMoney()
+    
+            if currentMoney ~= lastMoney then
+                lastMoney = currentMoney
+                unchangedTime = 0
+            else
+                unchangedTime += 60
+            end
+    
+            if unchangedTime >= 600 then -- 10 minutes
+                Player:Kick("No money earned in the last 10 minutes.")
+                break
+            end
+        end
+    end)
     
     getgenv().userSetPetFarm = getgenv().PetFarm
     
