@@ -1,6 +1,6 @@
 --REVAMP
 --AUTO PLAY 4/2/2025 7:41am
--- Moon 5/3/25 12:40AM
+-- 4/30/2025 10:06AM
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -1558,37 +1558,6 @@ if not _G.ScriptRunning then
                     task.wait(0.3)
                     
                     print("done pizza")
-                end
-                -- Check if 'pizza_party' is in the FirstTableArray
-                if table.find(FirstTableArray, "moon") or table.find(SecondTableArray, "moon") or table.find(BabyAilmentsArray, "moon") then
-                    --print("going pizza")
-                    taskName = "🍕"
-                    getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                    game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("PizzaShop")
-                    teleportPlayerNeeds(0, 350, 0)
-                    createPlatform()
-                    
-                    repeat task.wait(1)
-                    until not hasTargetAilment("moon", petToEquip) and not hasTargetAilment("moon", petToEquipSecond) and not ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments["moon"]
-                    task.wait(2)
-                    removeItemByValue(FirstTableArray, "moon")
-                    removeItemByValue(SecondTableArray, "moon")
-                    removeItemByValue(BabyAilmentsArray, "moon")
-                    PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                    BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
-                    getAilments(PetAilmentsData)
-                    getBabyAilments(BabyAilmentsData)
-                    taskName = "none"
-                    local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
-                    game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MainMap",
-                    game:GetService("Players").LocalPlayer, LiveOpsMapSwap.get_current_map_type())
-                    task.wait(0.3)
-                    teleportPlayerNeeds(0, 350, 0)
-                    task.wait(0.3)
-                    createPlatform()
-                    task.wait(0.3)
-                    
-                    print("done moon")
                 end
                 -- Check if 'bored' is in the FirstTableArray
                 if table.find(FirstTableArray, "bored") or table.find(SecondTableArray, "bored") then
