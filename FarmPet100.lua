@@ -1,6 +1,6 @@
 --REVAMP
 --AUTO PLAY 4/2/2025 7:41am
--- Moon 5/3/25 12:40AM
+-- Moon 5/3/25 11:25AM
 getgenv().PetFarm = true
 
 if not _G.ScriptRunning then
@@ -1564,7 +1564,7 @@ if not _G.ScriptRunning then
                     --print("going pizza")
                     taskName = "🍕"
                     getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                    game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("PizzaShop")
+                    game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("MoonInterior")
                     teleportPlayerNeeds(0, 350, 0)
                     createPlatform()
                     
