@@ -1,4 +1,4 @@
--- Farm 5/5/25 12:11PM
+-- Farm 5/5/25 12:39PM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -1097,8 +1097,8 @@ if not _G.ScriptRunning then
                             local playerName = game.Players.LocalPlayer.Name
                             local babyAilments = playerData and playerData[playerName] and playerData[playerName].ailments_manager and playerData[playerName].ailments_manager.baby_ailments
 
-                            local salonAilment = babyAilments and babyAilments["moon"]
-                        until (not hasTargetAilment or not hasTargetAilment("moon")) and not salonAilment or t > 60
+                            local moonAilment = babyAilments and babyAilments["moon"]
+                        until (not hasTargetAilment or not hasTargetAilment("moon")) and not moonAilment or t > 60
 
                         task.wait(2)
                         removeItemByValue(PetAilmentsArray, "moon")
@@ -1535,60 +1535,60 @@ if not _G.ScriptRunning then
                     end 
 
                     -- Check if 'pet me' is in the PetAilmentsArray
-                    -- if table.find(PetAilmentsArray, "pet_me") then
-                    --     --print("going pet me")
-                    --     taskName = "👋"
-                    --     equipPet()
-                    --     task.wait(3)
-                    --     -- pet me task
-                    --     -- Loop through all `ailments_list` in PlayerGui
-                    --     local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
-                    --     for _, ailmentsList in pairs(playerGui:GetChildren()) do
-                    --         if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
-                    --             local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
-                    --             if container and container ~= "UIListLayout" then
-                    --                 for _, button in pairs(container:GetChildren()) do
-                    --                     FireSig(button) -- Click each ailment button
-                    --                     task.wait(3) -- Optional delay between clicks
-                    --                     if game:GetService("Players").LocalPlayer.PlayerGui.FocusPetApp.BackButton.Visible then
-                    --                         -- Handle the API call after interacting with all ailments
-                    --                         print("inside focus")
-                    --                         local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                    if table.find(PetAilmentsArray, "pet_me") then
+                        --print("going pet me")
+                        taskName = "👋"
+                        equipPet()
+                        task.wait(3)
+                        -- pet me task
+                        -- Loop through all `ailments_list` in PlayerGui
+                        local playerGui = game:GetService("Players").LocalPlayer.PlayerGui
+                        for _, ailmentsList in pairs(playerGui:GetChildren()) do
+                            if ailmentsList.Name == "ailments_list" and ailmentsList:FindFirstChild("SurfaceGui") then
+                                local container = ailmentsList.SurfaceGui:FindFirstChild("Container")
+                                if container and container ~= "UIListLayout" then
+                                    for _, button in pairs(container:GetChildren()) do
+                                        FireSig(button) -- Click each ailment button
+                                        task.wait(3) -- Optional delay between clicks
+                                        if game:GetService("Players").LocalPlayer.PlayerGui.FocusPetApp.BackButton.Visible then
+                                            -- Handle the API call after interacting with all ailments
+                                            print("inside focus")
+                                            local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
 
-                    --                         local args = {
-                    --                             [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
-                    --                         }
-                    --                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ProgressPetMeAilment"):FireServer(unpack(args))
+                                            local args = {
+                                                [1] = ClientData.get("pet_char_wrappers")[1].pet_unique
+                                            }
+                                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ProgressPetMeAilment"):FireServer(unpack(args))
 
-                    --                         task.wait(1) -- Optional delay between clicks
-                    --                         -- Click the back button
-                    --                         local backButton = playerGui.FocusPetApp.BackButton
-                    --                         FireSig(backButton)
-                    --                         break
-                    --                     else
-                    --                         print("no back button found")
-                    --                     end
-                    --                 end
-                    --             end
-                    --         end
-                    --     end
-                    --     local t = 0
-                    --     repeat task.wait(1)
-                    --         t = 1 + t
-                    --         print('doing pet me')
-                    --     until not hasTargetAilment("pet_me") or t > 60
-                    --     removeItemByValue(PetAilmentsArray, "pet_me")
-                    --     local args = {
-                    --         [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                    --     }
+                                            task.wait(1) -- Optional delay between clicks
+                                            -- Click the back button
+                                            local backButton = playerGui.FocusPetApp.BackButton
+                                            FireSig(backButton)
+                                            break
+                                        else
+                                            print("no back button found")
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        local t = 0
+                        repeat task.wait(1)
+                            t = 1 + t
+                            print('doing pet me')
+                        until not hasTargetAilment("pet_me") or t > 60
+                        removeItemByValue(PetAilmentsArray, "pet_me")
+                        local args = {
+                            [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
+                        }
                         
-                    --     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
-                    --     PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
-                    --     getAilments(PetAilmentsData)
-                    --     taskName = "none"
-                    --     equipPet()
-                    --     --print("done mysteryTask")
-                    -- end
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
+                        PetAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.ailments
+                        getAilments(PetAilmentsData)
+                        taskName = "none"
+                        equipPet()
+                        --print("done mysteryTask")
+                    end
 
                     
                     -- Check if 'catch' is in the PetAilmentsArray
@@ -1806,6 +1806,20 @@ if not _G.ScriptRunning then
                             task.wait(1)
                         until not hasTargetAilment("ride") or t > 60
                         -- Reset to default walk speed
+
+                        local argsUnequip = {
+                            [1] = strollerUnique,
+                            [2] = {
+                                ["use_sound_delay"] = true,
+                                ["equip_as_last"] = false
+                            }
+                        }
+                        
+                        game:GetService("ReplicatedStorage")
+                            :WaitForChild("API")
+                            :WaitForChild("ToolAPI/Unequip")
+                            :InvokeServer(unpack(argsUnequip))
+                            
                         Humanoid.WalkSpeed = 16
                         removeItemByValue(PetAilmentsArray, "ride")
                         task.wait(0.3)
