@@ -1,4 +1,4 @@
--- Farm 5/5/25 1:23 PM
+-- Farm 5/9/25 1:23 PM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -89,12 +89,23 @@ if not _G.ScriptRunning then
         end)
     end
     
+    local NewsApp = game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.Enabled
 
     local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
     local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
 
     sound.FX:play("BambooButton")
     UI.set_app_visibility("NewsApp", false)
+
+    while NewsApp do
+        NewsApp = game:GetService("Players").LocalPlayer.PlayerGui.NewsApp.Enabled
+        sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
+        UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
+    
+        sound.FX:play("BambooButton")
+        UI.set_app_visibility("NewsApp", false)
+        task.wait(3)
+    end
 
     task.wait(5)
     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
@@ -670,23 +681,25 @@ if not _G.ScriptRunning then
 
                         wait(0.5)
                         pcall(function()
-                            local actions = {"hungry", "thirsty", "sleepy", "toilet", "bored", "dirty", "play", "school", "salon", "pizza_party", "sick", "camping", "beach_party", "walk", "ride"}
+                            local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                            local actions = {
+                                "hungry", "thirsty", "sleepy", "toilet", "bored", "dirty",
+                                "play", "school", "salon", "pizza_party", "sick",
+                                "camping", "beachparty", "walk", "ride", "moon"
+                            }
                             
-                            for _, action in ipairs(actions) do
-                                if not PetAilmentsData[ailmentId] or not PetAilmentsData[ailmentId][taskId] then
-                                    --print("Mystery task not found anymore.")
-                                    foundMystery = true
-                                    break
+                            for i = 1, 3 do
+                                -- loop through all actions
+                                for _ , action in ipairs(actions) do
+                                    local args = {
+                                        ClientData.get_data()[game.Players.LocalPlayer.Name].equip_manager.pets[1].unique,
+                                        "mystery",
+                                        1,
+                                        action
+                                    }
+                                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
+                                    print(ClientData.get_data()[game.Players.LocalPlayer.Name].equip_manager.pets[1].unique, i, action)
                                 end
-
-                                wait(0.5)
-                                local args = {
-                                    [1] = ailmentKey,
-                                    [2] = i,
-                                    [3] = action
-                                }
-
-                                game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
                             end
                         end)
                     end
@@ -888,33 +901,7 @@ if not _G.ScriptRunning then
 
         -- ######################################### EVENT
 
-        task.spawn(function()
-            while true do -- Infinite loop to keep running every 15 minutes
-                for j = 1, 8 do 
-                    local args = {
-                        [1] = j
-                    }
-            
-                    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRose"):FireServer(unpack(args))
-            
-                    for i = 1, 20 do
-                        local args = {
-                            [1] = j,
-                            [2] = {
-                                [1] = i,
-                            }
-                        }
-            
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ValentinesEventAPI/PickupRoseHearts"):FireServer(unpack(args))
-            
-                        task.wait(0.1) -- Small delay to prevent potential lag or rate limiting
-                    end
-                end
-            
-                --print("Getting roses :D")
-                task.wait(900) -- Wait for 15 minutes before repeating
-            end            
-        end)
+
 
 
         -- #########################################
@@ -1505,27 +1492,43 @@ if not _G.ScriptRunning then
                     end  
                     
                     -- Check if 'mysteryTask' is in the PetAilmentsArray
-                    -- if table.find(PetAilmentsArray, "mystery") then
-                    --     --print("going mysteryTask")
-                    --     taskName = "❓"
-                    --     getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                    --     task.wait(3)
-                    --     -- mystery task
-                    --     get_mystery_task()
-                    --     local t = 0
-                    --     repeat task.wait(1)
-                    --         t = 1 + t
-                    --     until not hasTargetAilment("mystery") or t > 60
-                    --     local args = {
-                    --         [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
-                    --     }
+                    if table.find(PetAilmentsArray, "mystery") then
+                        --print("going mysteryTask")
+                        taskName = "❓"
+                        getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                        task.wait(3)
+                        -- mystery task
+                        local actions = {
+                            "hungry", "thirsty", "sleepy", "toilet", "bored", "dirty",
+                            "play", "school", "salon", "pizza_party", "sick",
+                            "camping", "beach_party", "walk", "ride", "moon"
+                        }
                         
-                    --     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
-                    --     removeItemByValue(PetAilmentsArray, "mystery")
-                    --     taskName = "none"
-                    --     equipPet()
-                    --     --print("done mysteryTask")
-                    -- end 
+                        for _, action in ipairs(actions) do
+                            local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+                            local args = {
+                                ClientData.get_data()[game.Players.LocalPlayer.Name].equip_manager.pets[1].unique,
+                                "mystery",
+                                1,
+                                action  -- pass the current string, not the whole table
+                            }
+                            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AilmentsAPI/ChooseMysteryAilment"):FireServer(unpack(args))
+                            task.wait(2)
+                        end
+                        local t = 0
+                        repeat task.wait(1)
+                            t = 1 + t
+                        until not hasTargetAilment("mystery") or t > 60
+                        local args = {
+                            [1] = getgenv().fsys.get("pet_char_wrappers")[1].pet_unique
+                        }
+                        
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(unpack(args))
+                        removeItemByValue(PetAilmentsArray, "mystery")
+                        taskName = "none"
+                        equipPet()
+                        --print("done mysteryTask")
+                    end 
 
                     -- Check if 'pet me' is in the PetAilmentsArray
                     -- if table.find(PetAilmentsArray, "pet_me") then
@@ -1748,8 +1751,17 @@ if not _G.ScriptRunning then
                         }
                         
                         game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("ToolAPI/Equip"):InvokeServer(unpack(args))         
+
+
+                        local args = {
+                            game:GetService("Players"):WaitForChild(workspace:WaitForChild("PlayerCharacters"):GetChildren()[1].Name),
+                            workspace:WaitForChild("Pets"):GetChildren()[1],
+                            game:GetService("Players").LocalPlayer.Character:WaitForChild("StrollerTool"):WaitForChild("ModelHandle"):WaitForChild("TouchToSits"):WaitForChild("TouchToSit")
+                        }
                         
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/UseStroller"):InvokeServer(fsys.get("pet_char_wrappers")[1]["char"], game:GetService("Players").LocalPlayer.Character.StrollerTool.ModelHandle.TouchToSits.TouchToSit)
+                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/UseStroller"):InvokeServer(unpack(args))
+                        
+                        
                         
                         
                         -- Get the player's character and HumanoidRootPart
@@ -1816,8 +1828,7 @@ if not _G.ScriptRunning then
                         Humanoid.WalkSpeed = 16
                         removeItemByValue(PetAilmentsArray, "ride")
                         task.wait(0.3)
-                        
-                        game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/EjectBaby"):FireServer(fsys.get("pet_char_wrappers")[1]["char"])  
+                                             
                         task.wait(0.3)              
                         taskName = "none"
                         equipPet()
