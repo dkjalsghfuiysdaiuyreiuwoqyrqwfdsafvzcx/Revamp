@@ -1,4 +1,4 @@
--- Farm 6/6/25 11:30 PM
+-- Farm 6/6/25 11:51 PM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -153,7 +153,7 @@ if not _G.ScriptRunning then
         end
     end
 
-    if Cash <= 125 and not HasTradeLic then
+    if Cash <= 10000 and not HasTradeLic then
         print("New account")
         print("Inside new account")
         local success, err = pcall(function()
