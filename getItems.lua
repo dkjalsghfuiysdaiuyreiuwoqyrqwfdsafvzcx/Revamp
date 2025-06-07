@@ -1,3 +1,4 @@
+print("Running Get Items")
 local router
 for i, v in next, getgc(true) do
     if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
