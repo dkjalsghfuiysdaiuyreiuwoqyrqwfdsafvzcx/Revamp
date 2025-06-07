@@ -26,6 +26,40 @@ local SocialStones = ClientData.get_data()[game.Players.LocalPlayer.Name].social
 local StonesToBuy = math.floor(SocialStones / 25)
 local FoodData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
 
+local function createPlatform()
+        local Player = game.Players.LocalPlayer
+        local character = Player.Character or Player.CharacterAdded:Wait()
+        local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+        -- Count existing platforms in the workspace
+        local existingPlatforms = 0
+        for _, object in pairs(workspace:GetChildren()) do
+            if object.Name == "CustomPlatform" then
+                existingPlatforms += 1
+            end
+        end
+
+        -- Check if the number of platforms exceeds 5
+        if existingPlatforms >= 5 then
+            --print("Maximum number of platforms reached, skipping creation.")
+            return
+        end
+
+        -- Debug message
+        --print("Teleport successful, creating platform...")
+
+        -- Create the platform part
+        local platform = Instance.new("Part")
+        platform.Name = "CustomPlatform" -- Unique name to identify the platform
+        platform.Size = Vector3.new(1100, 1, 1100) -- Size of the platform
+        platform.Anchored = true -- Make sure the platform doesn't fall
+        platform.CFrame = humanoidRootPart.CFrame * CFrame.new(0, -5, 0) -- Place 5 studs below the player
+
+        -- Set part properties
+        platform.BrickColor = BrickColor.new("Bright yellow") -- You can change the color
+        platform.Parent = workspace -- Parent to the workspace so it's visible
+end
+
 if StonesToBuy > 0 then
     local args = {
         "food",
@@ -36,20 +70,8 @@ if StonesToBuy > 0 then
 end
 
 task.wait(1)
-getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-local function TeleportToMaps(map)
-    local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
-    local OrigThreadID = getthreadidentity()
-    task.wait(1)
-    setidentity(2)
-    task.wait(1)
-    fsysCore.enter_smooth(map, "MainDoor", {
-        ["spawn_cframe"] = targetCFrame * CFrame.Angles(0, 0, 0)
-    })
-    setidentity(OrigThreadID)
-end
-
-TeleportToMaps("Butterfly2025Sanctuary")
+game:GetService("ReplicatedStorage").API:FindFirstChild("LocationAPI/SetLocation"):FireServer("Butterfly2025Sanctuary")
+createPlatform()
 
 task.wait(3)
 
