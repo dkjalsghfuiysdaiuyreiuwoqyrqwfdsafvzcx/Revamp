@@ -35,6 +35,24 @@ if StonesToBuy > 0 then
     game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SocialStonesAPI/AttemptExchange"):FireServer(unpack(args))
 end
 
+task.wait(1)
+getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
+local function TeleportToMaps(map)
+    local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
+    local OrigThreadID = getthreadidentity()
+    task.wait(1)
+    setidentity(2)
+    task.wait(1)
+    fsysCore.enter_smooth(map, "MainDoor", {
+        ["spawn_cframe"] = targetCFrame * CFrame.Angles(0, 0, 0)
+    })
+    setidentity(OrigThreadID)
+end
+
+TeleportToMaps("Butterfly2025Sanctuary")
+
+task.wait(3)
+
 for x, y in pairs(FoodData) do
     if y.id == "butterfly_2025_snapdragon_flower" then
         local args = {
