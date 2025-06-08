@@ -1,4 +1,4 @@
--- Farm 6/6/25 11:51 PM
+-- Farm 6/9/25 1:01 AM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -426,6 +426,7 @@ if not _G.ScriptRunning then
     
     local function equipPet()
         -- Attempt to require ClientData module
+        
         local success, fsys = pcall(function()
             return require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
         end)
@@ -948,6 +949,7 @@ if not _G.ScriptRunning then
                         removeItemByValue(BabyAilmentsArray, "hungry")
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
+                        equipPet()
                     end
                     -- Baby thirsty
                     if table.find(BabyAilmentsArray, "thirsty") then
@@ -962,6 +964,7 @@ if not _G.ScriptRunning then
                         removeItemByValue(BabyAilmentsArray, "thirsty")
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
+                        equipPet()
                     end
                     
                     -- Baby sick
@@ -1205,6 +1208,7 @@ if not _G.ScriptRunning then
                         end
                         BabyAilmentsData = ClientData.get_data()[game.Players.LocalPlayer.Name].ailments_manager.baby_ailments
                         getBabyAilments(BabyAilmentsData)
+                        equipPet()
                     end
                     
                     -- Check if 'beach_party' is in the PetAilmentsArray
@@ -1834,7 +1838,7 @@ if not _G.ScriptRunning then
                         equipPet()
                         --print("done ride")
                     end            
-                    
+                    equipPet()
                 until not getgenv().PetFarmGuiStarter
             end
             task.wait(1)
@@ -2113,9 +2117,16 @@ if not _G.ScriptRunning then
             else
                 unchangedTime += 60
             end
-    
+
             if unchangedTime >= 600 then -- 10 minutes
-                Player:Kick("No money earned in the last 10 minutes.")
+                getgenv().PetFarmGuiStarter = false
+                task.wait(30)
+                task.spawn(startPetFarm)
+                break
+            end
+    
+            if unchangedTime >= 1200 then -- 20 minutes
+                Player:Kick("No money earned in the last 20 minutes.")
                 break
             end
         end
