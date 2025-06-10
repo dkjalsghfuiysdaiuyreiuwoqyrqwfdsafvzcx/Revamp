@@ -1,4 +1,4 @@
--- Farm 6/9/25 1:01 AM
+-- Farm 6/10/25 2:01 PM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -2121,6 +2121,7 @@ if not _G.ScriptRunning then
             if unchangedTime >= 600 then -- 10 minutes
                 getgenv().PetFarmGuiStarter = false
                 task.wait(30)
+                getgenv().PetFarmGuiStarter = true
                 task.spawn(startPetFarm)
                 break
             end
