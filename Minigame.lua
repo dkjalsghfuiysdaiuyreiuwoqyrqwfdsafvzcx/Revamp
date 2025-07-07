@@ -1,810 +1,164 @@
 if not _G.ScriptRunning then
     _G.ScriptRunning = true
-
-    if not hookmetamethod then
-        return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
-    end
-
-    local TeleportService = game:GetService("TeleportService")
-    local oldIndex
-    local oldNamecall
-
-    -- Hook __index to intercept TeleportService method calls
-    oldIndex = hookmetamethod(game, "__index", function(self, key)
-        if self == TeleportService and (key:lower() == "teleport" or key == "TeleportToPlaceInstance") then
-            return function()
-                error("Teleportation blocked by anti-teleport script.", 2)
-            end
-        end
-        return oldIndex(self, key)
-    end)
-
-    -- Hook __namecall to intercept method calls like TeleportService:Teleport(...)
-    oldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
-        local method = getnamecallmethod()
-        if self == TeleportService and (method:lower() == "teleport" or method == "TeleportToPlaceInstance") then
-            return
-        end
-        return oldNamecall(self, ...)
-    end)
-
-    print('Anti-Rejoin', 'Teleportation prevention is now active.')
-
-    local router
-    for i, v in next, getgc(true) do
-        if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
-            router = v
-        end
-    end
-    local function rename(remotename, hashedremote)
-        hashedremote.Name = remotename
-    end
-    -- Apply renaming to upvalues of the RouterClient.init function
-    table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
     
     local sound = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("SoundPlayer")
     local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-
+    task.wait(2)
     sound.FX:play("BambooButton")
     UI.set_app_visibility("NewsApp", false)
+    
+    task.wait(5)
+    
+    
+    getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
+    local function teleportToMainmap()
+    	local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
+    	local OrigThreadID = getthreadidentity()
+    	task.wait(1)
+    	setidentity(2)
+    	task.wait(1)
+    	fsysCore.enter_smooth("MainMap", "MainDoor", {
+    		["spawn_cframe"] = targetCFrame * CFrame.Angles(0, 0, 0)
+    	})
+    	setidentity(OrigThreadID)
+    end
+    teleportToMainmap()
+    task.wait(2)
+    
+        local function FireSig(button)
+            pcall(function()
+                for _, connection in pairs(getconnections(button.MouseButton1Down)) do
+                    connection:Fire()
+                end
+                task.wait(0.1)
+                for _, connection in pairs(getconnections(button.MouseButton1Up)) do
+                    connection:Fire()
+                end
+                task.wait(0.1)
+                for _, connection in pairs(getconnections(button.MouseButton1Click)) do
+                    connection:Fire()
+                    -- print(button.Name.." clicked!")
+                end
+            end)
+        end
+    	
+    local function teleportPlayerNeeds(x, y, z)
+    
+    	if x == 0 and y == 350 and z == 0 then
+    		x = math.random(10, 20)
+    	end
+    	local Player = game.Players.LocalPlayer
+    	if Player and Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
+    		Player.Character.HumanoidRootPart.CFrame = CFrame.new(x, y, z) 
+    	else
+    		--print("Player or character not found!")
+    	end
+    end
+    
+    teleportPlayerNeeds(-589.408, 35.7978, -1669.11828)
+    
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
+    local focusPetApp = Player.PlayerGui.FocusPetApp.Frame
+    local ailments = focusPetApp.Ailments
+    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+    
+    getgenv().fsys = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
+    
+    
     local virtualUser = game:GetService("VirtualUser")
     
     Player.Idled:Connect(function()
-        virtualUser:CaptureController()
-        virtualUser:ClickButton2(Vector2.new())
+    	virtualUser:CaptureController()
+    	virtualUser:ClickButton2(Vector2.new())
     end)
     
-    --print("FarmPet Now running!")
+    task.spawn(function()
+    	while true do
+    		task.wait(1200) -- every 20 minutes 
+    		game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping)
+    		print("Anti-AFK jump")
+    	end
+    end)
+    
+    task.wait(2)
+    
     local Players = game:GetService("Players")
-    local Player = Players.LocalPlayer
-    local CoreGui = game:GetService("CoreGui")
-    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
-    local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
-
-
-
-    task.wait(5)
-    game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
-    sound.FX:play("BambooButton")
-    UI.set_app_visibility("DailyLoginApp", false)
-    
-    local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-    local Cash = ClientData.get_data()[game.Players.LocalPlayer.Name].money
-
-
-    local NewAcc = false
-    local HasTradeLic = false
-    if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
-        for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
-            if v.id == "trade_license" then
-                print("has trade lic")
-                HasTradeLic = true
-            end
-        end
-    end
-    
-    if Cash <= 125 and not HasTradeLic then
-        print("New account")
-        print("Inside new account")
-    
-    
-        local success, err = pcall(function()
-            local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-            UI.set_app_visibility("DialogApp", false)
-            
-            local args = {
-                [1] = "theme_color",
-                [2] = "black"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Parents",
-                [2] = {
-                    ["source_for_logging"] = "intro_sequence",
-                    ["dont_enter_location"] = true
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer(unpack(args))
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Avatar Editor Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SubmitAvatarAnalyticsEvent"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "female"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetGender"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SubmitAvatarAnalyticsEvent"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Avatar Editor Closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Housing Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Housing Editor Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "edit_state_entered",
-                [2] = {
-                    ["house_type"] = "mine"
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/SendHousingOnePointOneLog"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            
-            
-            local args = {
-                [1] = "edit_state_exited",
-                [2] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/SendHousingOnePointOneLog"):FireServer(unpack(args))
-            task.wait(2)
-            
-            local args = {
-                [1] = game:GetService("Players").LocalPlayer
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/UnsubscribeFromHouse"):InvokeServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Interiors",
-                [2] = "Neighborhood!Default"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DownloadsAPI/Download"):InvokeServer(unpack(args))
-            task.wait(2)
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
-            task.wait(2)
-            
-            
-            
-            local args = {
-                [1] = "Nursery Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("GuideArrowAPI/GetGraph"):InvokeServer()
-            task.wait(2)
-            local args = {
-                [1] = "Nursery Entered"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = false
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = true
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/EquipTutorialEgg"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = "Started Egg Received"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("JournalAPI/CommitCollection"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg")
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ResetNetworkOwnership"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/AddTutorialQuest"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = "Quest Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            
-            local args = {
-                [1] = "Quest App Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Quest App Closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Tutorial Ailment Spawned"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/AddHungryAilment"):FireServer()
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("QuestAPI/MarkQuestsViewed"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg")
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/FocusPet"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = false
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg"),
-                [2] = {
-                    ["FocusPet"] = true
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ReplicateActivePerformances"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg"),
-                [2] = {
-                    ["local_anim_name"] = "DogSit",
-                    ["local_anim_speed"] = 1,
-                    ["dont_allow_sit_states"] = true,
-                    ["dont_allow_remote_interaction"] = true,
-                    ["anim_fade_time"] = 0.2
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ReplicatePerformanceModifiers"):FireServer(unpack(args))
-            task.wait(2)
-            
-            --get food unique
-            local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-            local foodData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
-            local tutorialegg
-            local tutorialfood
-            for x,y in pairs(foodData) do
-                if y.kind == 'sandwich-default' then
-                    tutorialfood = y.unique 
-                end
-            end
-            
-            --pet unique
-            local petData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
-            for x,y in pairs(petData) do
-                if y.kind == 'starter_egg' then
-                    tutorialegg = y.unique
-                end
-            end
-            local args = {
-                [1] = "__Enum_PetObjectCreatorType_2",
-                [2] = {
-                    ["pet_unique"] = tutorialegg,
-                    ["spawn_cframe"] = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position),
-                    ["additional_consume_uniques"] = {},
-                    ["unique_id"] = tutorialfood
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(2)
-        end)
-        if not success then
-            warn("Error in first task: " .. tostring(err))
-        end
-        
-        local success, err = pcall(function()
-            local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-            UI.set_app_visibility("DialogApp", false)
-            
-            local args = {
-                [1] = "theme_color",
-                [2] = "black"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Parents",
-                [2] = {
-                    ["source_for_logging"] = "intro_sequence",
-                    ["dont_enter_location"] = true
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TeamAPI/ChooseTeam"):InvokeServer(unpack(args))
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Avatar Editor Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SubmitAvatarAnalyticsEvent"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "female"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetGender"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SubmitAvatarAnalyticsEvent"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Avatar Editor Closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Housing Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Housing Editor Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "edit_state_entered",
-                [2] = {
-                    ["house_type"] = "mine"
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/SendHousingOnePointOneLog"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            
-            
-            local args = {
-                [1] = "edit_state_exited",
-                [2] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/SendHousingOnePointOneLog"):FireServer(unpack(args))
-            task.wait(2)
-            
-            local args = {
-                [1] = game:GetService("Players").LocalPlayer
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/UnsubscribeFromHouse"):InvokeServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = {}
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("HousingAPI/PushFurnitureChanges"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Interiors",
-                [2] = "Neighborhood!Default"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DownloadsAPI/Download"):InvokeServer(unpack(args))
-            task.wait(2)
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("DailyLoginAPI/ClaimDailyReward"):InvokeServer()
-            task.wait(2)
-            
-            
-            
-            local args = {
-                [1] = "Nursery Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("GuideArrowAPI/GetGraph"):InvokeServer()
-            task.wait(2)
-            local args = {
-                [1] = "Nursery Entered"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = false
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = true
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/EquipTutorialEgg"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = "Started Egg Received"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("JournalAPI/CommitCollection"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg")
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ResetNetworkOwnership"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("TutorialAPI/AddTutorialQuest"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = "Quest Tutorial Started"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            
-            local args = {
-                [1] = "Quest App Opened"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Quest App Closed"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = "Tutorial Ailment Spawned"
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/StashTutorialStatus"):FireServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/AddHungryAilment"):FireServer()
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("QuestAPI/MarkQuestsViewed"):FireServer()
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg")
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AdoptAPI/FocusPet"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = false
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("AvatarAPI/SetPlayerOnPlayerCollision"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg"),
-                [2] = {
-                    ["FocusPet"] = true
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ReplicateActivePerformances"):FireServer(unpack(args))
-            task.wait(2)
-            local args = {
-                [1] = workspace:WaitForChild("Pets"):WaitForChild("Starter Egg"),
-                [2] = {
-                    ["local_anim_name"] = "DogSit",
-                    ["local_anim_speed"] = 1,
-                    ["dont_allow_sit_states"] = true,
-                    ["dont_allow_remote_interaction"] = true,
-                    ["anim_fade_time"] = 0.2
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetAPI/ReplicatePerformanceModifiers"):FireServer(unpack(args))
-            task.wait(2)
-            
-            --get food unique
-            local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-            local foodData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.food
-            local tutorialegg
-            local tutorialfood
-            for x,y in pairs(foodData) do
-                if y.kind == 'sandwich-default' then
-                    tutorialfood = y.unique 
-                end
-            end
-            
-            --pet unique
-            local petData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
-            for x,y in pairs(petData) do
-                if y.kind == 'starter_egg' then
-                    tutorialegg = y.unique
-                end
-            end
-            local args = {
-                [1] = "__Enum_PetObjectCreatorType_2",
-                [2] = {
-                    ["pet_unique"] = tutorialegg,
-                    ["spawn_cframe"] = CFrame.new(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.Position),
-                    ["additional_consume_uniques"] = {},
-                    ["unique_id"] = tutorialfood
-                }
-            }
-            
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("PetObjectAPI/CreatePetObject"):InvokeServer(unpack(args))
-            task.wait(2)
-            game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("LegacyTutorialAPI/MarkTutorialCompleted"):FireServer()
-            task.wait(2)
-        end)
-        if not success then
-            warn("Error in second task: " .. tostring(err))
-        end
-        
-    
-    
-        while not HasTradeLic do
-            print("no trade lic")
-            if ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys then 
-                fsys = require(game.ReplicatedStorage:WaitForChild("Fsys")).load
-                local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
-                fsys("RouterClient").get("SettingsAPI/SetBooleanFlag"):FireServer("has_talked_to_trade_quest_npc", true)
-                task.wait()
-                fsys("RouterClient").get("TradeAPI/BeginQuiz"):FireServer()
-                task.wait(1)
-                for i, v in pairs(fsys('ClientData').get("trade_license_quiz_manager")["quiz"]) do
-                        fsys("RouterClient").get("TradeAPI/AnswerQuizQuestion"):FireServer(v["answer"])
-                    task.wait()
-                end
-                for i, v in pairs(ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.toys) do
-                    if v.id == "trade_license" then
-                        print("have trade lic")
-                        HasTradeLic = true
-                    end
-                end
-            end
-            task.wait(0.4)
-        end
-        Player:Kick("Tutorial completed please restart game!")
-    end
-
-
-    local Players = game:GetService("Players")
+    local VirtualInputManager = game:GetService("VirtualInputManager")
     local player = Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
     
-    getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
+    local Interiors = workspace:WaitForChild("Interiors")
+    local targetPosition = Vector3.new(12028.45, 9904.26, 5982.73)
     
-    
-    local function teleportToMainmap()
-        local targetCFrame = CFrame.new(-275.9091491699219, 25.812084197998047, -1548.145751953125, -0.9798217415809631, 0.0000227206928684609, 0.19986890256404877, -0.000003862579433189239, 1, -0.00013261348067317158, -0.19986890256404877, -0.00013070966815575957, -0.9798217415809631)
-        local OrigThreadID = getthreadidentity()
-        task.wait(1)
-        setidentity(2)
-        task.wait(1)
-        fsysCore.enter_smooth("MainMap", "MainDoor", {
-            ["spawn_cframe"] = targetCFrame * CFrame.Angles(0, 0, 0)
-        })
-        setidentity(OrigThreadID)
+    -- Function to simulate clicking the center of the screen
+    local function clickCenter()
+        local screenCenter = workspace.CurrentCamera.ViewportSize / 2
+        VirtualInputManager:SendMouseButtonEvent(screenCenter.X, screenCenter.Y, 0, true, game, 0)
+        VirtualInputManager:SendMouseButtonEvent(screenCenter.X, screenCenter.Y, 0, false, game, 0)
     end
     
-    teleportToMainmap()
-    task.wait(5)
     
-    local toykyoZone = workspace.Interiors["MainMap!Default"].TearUpToykyoJoinZone
-    local sakuraZone = workspace.Interiors["MainMap!Default"].BlossomShakedownJoinZone
+    local radius = 3
     
-    local function getTimeLeft(path)
-        local label = path and path:FindFirstChild("TimerLabel")
-        if not label then return nil end
-        local m, s = label.Text:match("(%d+):(%d+)")
-        return m and s and (tonumber(m) * 60 + tonumber(s)) or nil
-    end
-    
-    -- 🧠 Function 1: Monitor timer and teleport
-    task.spawn(function()
-        local nextZone = nil
-    
-        while true do
-            task.wait(1)
-    
-            local interiors = workspace:FindFirstChild("Interiors")
-            local mainMap = interiors and interiors:FindFirstChild("MainMap!Default")
-            local toyZone = mainMap and mainMap:FindFirstChild("TearUpToykyoJoinZone")
-            local sakZone = mainMap and mainMap:FindFirstChild("BlossomShakedownJoinZone")
-    
-            local toyTime = toyZone and getTimeLeft(toyZone:FindFirstChild("Billboard") and toyZone.Billboard:FindFirstChild("BillboardGui"))
-            local sakTime = sakZone and getTimeLeft(sakZone:FindFirstChild("Billboard") and sakZone.Billboard:FindFirstChild("BillboardGui"))
-    
-            print('time check ', toyTime, ' ', sakTime)
-    
-            if (nextZone == "Toykyo" or nextZone == nil) and toyTime and toyTime <= 180 then
-                hrp.CFrame = CFrame.new(Vector3.new(117.42, 30.84, -1456.33))
-                nextZone = "Sakura"
-            elseif (nextZone == "Sakura" or nextZone == nil) and sakTime and sakTime <= 180 then
-                hrp.CFrame = CFrame.new(Vector3.new(74.45, 41.19, -1571.40))
-                nextZone = "Toykyo"
-            end
-        end
-    end)
-    
-    -- 💥 Function 2: Loop through StaticMap and fire events
-    task.spawn(function()
-        while true do
-            task.wait(1)
-    
-            local targetKey = nil -- 🔄 Reset every loop
-    
-            for _, instance in ipairs(workspace.StaticMap:GetChildren()) do
-                local name = instance.Name
-                if name:match("^tear_up_toykyo::.+_minigame_state$") then
-                    targetKey = name
-                    break
-                end
-            end
-    
-            if targetKey then
-                task.wait(10)
-                local baseArg = targetKey:gsub("_minigame_state$", "")
-                
-                for x = 1, 2500 do
-                    if not targetKey:match("^tear_up_toykyo::") then
-                        warn("Stopped inner loop: targetKey no longer matches.")
-                        break
-                    end
-    
-                    local args = {
-                        [1] = baseArg,
-                        [2] = "building_destroyed",
-                        [3] = x
-                    }
-    
-                    game:GetService("ReplicatedStorage")
-                        :WaitForChild("API")
-                        :WaitForChild("MinigameAPI/MessageServer")
-                        :FireServer(unpack(args))
-                end
-    
+    local function checkDistance()
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character.HumanoidRootPart
+            local distance = (hrp.Position - targetPosition).Magnitude
+            
+            if distance <= radius then
+                print("You are within 10 studs of the target location!")
+                -- you can add more logic here, like triggering an event
             else
-                warn("Could not find matching StaticMap key!")
-                local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-                UI.set_app_visibility("MinigameNewsPaperApp", false)
+                print("You are outside the detection radius.")
+    			teleportPlayerNeeds(12028.45, 9904.26, 5982.73)
             end
         end
-    end)
+    end
     
+    -- Main loop
+    while true do
+        local targetInterior = nil
     
-    task.spawn(function()
-        local UI = require(game.ReplicatedStorage:WaitForChild("Fsys")).load("UIManager")
-        local InShakeDown = false 
-        local FinishedMinigame = false
-        local RunService = game:GetService("RunService")
-        local gui = player:FindFirstChild("PlayerGui")
-        local dialogApp = gui and gui:FindFirstChild("DialogApp")
-        while true do
-            -- Wait until we are inside the BlossomShakedownInterior
-            if not InShakeDown and workspace.Interiors:FindFirstChild("BlossomShakedownInterior") then
-                InShakeDown = true
-                task.wait(2)
-        
-                local rings = workspace.Interiors.BlossomShakedownInterior:WaitForChild("Rings")
-                local messageServer = game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("MinigameAPI/MessageServer")
-        
-                local count = 0
-                for _, ring in ipairs(rings:GetChildren()) do
-                    if count >= 40 then break end
-                    messageServer:FireServer("blossom_shakedown", "petal_ring_flown_through", ring.Name)
-                    count += 1
-                end
+        -- Find the dynamic CoconutBonkInterior
+        for _, interior in ipairs(Interiors:GetChildren()) do
+            if interior.Name:match("^CoconutBonkInterior::") then
+                targetInterior = interior
+                break
             end
-        
-            -- Wait until player is back in MainMap and reward UI is shown
-            if InShakeDown and not FinishedMinigame then
-                local success = pcall(function()
-                    if workspace.Interiors:FindFirstChild("MainMap!Default") then
-                        local rewardsApp = gui and gui:FindFirstChild("MinigameRewardsApp")
-                        if rewardsApp and rewardsApp.Body.Visible then
-                            task.wait(2)
-                            
-                            -- Reset all flags
-                            InShakeDown = false
-                            FinishedMinigame = false
-                            
-                            if UI then
-                                UI.set_app_visibility("MinigameRewardsApp", false)
-                            end
-                        end
-                    end
-                end)
-                if not success then
-                    -- If MainMap or rewards not ready yet, wait a bit
-                    task.wait(1)
-                end
-            end
-            task.wait(1)
         end
-        
-    end)
+    
+        if targetInterior then
+    		task.wait(10)
+            print("Entered:", targetInterior.Name)
+    
+            -- Teleport to target position
+            teleportPlayerNeeds(12028.45, 9904.26, 5982.73)
+    		checkDistance()
+            -- Keep clicking while still inside
+            while targetInterior.Parent == Interiors do
+    			
+    
+    			while true do
+    				local success, err = pcall(function()
+    					local buttonFire = game:GetService("Players").LocalPlayer.PlayerGui.MinigameHotbarApp.Hotbar.SwordButton.Button
+    					FireSig(buttonFire)
+    				end)
+    				if success then
+    					print("FireSig succeeded.")
+    					break
+    				else
+    					warn("FireSig failed, retrying... Error:", err)
+    					task.wait(0.2)  -- wait a bit before retrying to avoid spamming too hard
+    				end
+    			end
+                task.wait(0.3)
+            end
+    
+            print("Exited:", targetInterior.Name)
+        end
+    
+        task.wait(1)
+    end
 end
