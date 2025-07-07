@@ -8,7 +8,6 @@ if not _G.ScriptRunning then
 
     task.wait(5)
 
-
     getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
     local Players = game:GetService("Players")
     local Player = Players.LocalPlayer
