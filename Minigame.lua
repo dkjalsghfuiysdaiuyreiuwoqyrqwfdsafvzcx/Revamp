@@ -10,7 +10,12 @@ if not _G.ScriptRunning then
 
 
     getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
-
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local CoreGui = game:GetService("CoreGui")
+    local PlayerGui = Player:FindFirstChildOfClass("PlayerGui") or CoreGui
+    local LiveOpsMapSwap = require(game:GetService("ReplicatedStorage").SharedModules.Game.LiveOpsMapSwap)
+    
     local router
     for i, v in next, getgc(true) do
         if type(v) == 'table' and rawget(v, 'get_remote_from_cache') then
