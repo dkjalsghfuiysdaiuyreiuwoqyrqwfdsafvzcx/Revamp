@@ -6,7 +6,7 @@ if not _G.ScriptRunning then
     sound.FX:play("BambooButton")
     UI.set_app_visibility("NewsApp", false)
 
-    task.wait(5)
+    task.wait(4)
 
     getgenv().fsysCore = require(game:GetService("ReplicatedStorage").ClientModules.Core.InteriorsM.InteriorsM)
     local Players = game:GetService("Players")
