@@ -1,4 +1,4 @@
---7/15/25
+-- 7/20/25
 
 local router
 for i, v in next, getgc(true) do
@@ -132,7 +132,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
 local Interiors = workspace:WaitForChild("Interiors")
-local targetPosition = Vector3.new(-8971.2568359375, 9904.51953125, 8981.8720703125)
+local targetPosition = Vector3.new(-5970.07373046875, 9905.8984375, 8980.234375)
 
 -- Function to simulate clicking the center of the screen
 local function clickCenter()
@@ -154,7 +154,7 @@ local function checkDistance()
             -- you can add more logic here, like triggering an event
         else
             print("You are outside the detection radius.")
-			teleportPlayerNeeds(-8971.2568359375, 9904.51953125, 8981.8720703125)
+			teleportPlayerNeeds(-5970.07373046875, 9905.8984375, 8980.234375)
         end
     end
 end
@@ -193,7 +193,7 @@ while true do
         end
         task.wait(.1)
         -- Teleport to target position
-        teleportPlayerNeeds(-8971.2568359375, 9904.51953125, 8981.8720703125)
+        teleportPlayerNeeds(-5970.07373046875, 9905.8984375, 8980.234375)
 		checkDistance()
         -- Keep clicking while still inside
         while targetInterior.Parent == Interiors do
