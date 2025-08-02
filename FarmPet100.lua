@@ -1,4 +1,4 @@
--- Farm 6/10/25 2:01 PM
+-- Farm 8/2/25 10:45 AM
 if not hookmetamethod then
     return notify('Incompatible Exploit', 'Your exploit does not support `hookmetamethod`')
 end
@@ -40,6 +40,13 @@ local function rename(remotename, hashedremote)
     hashedremote.Name = remotename
 end
 table.foreach(debug.getupvalue(router.get_remote_from_cache, 1), rename)
+
+local args = {
+	"show_spawn_location_dialog",
+	false
+}
+game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
+
 
 local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
 local PetData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
