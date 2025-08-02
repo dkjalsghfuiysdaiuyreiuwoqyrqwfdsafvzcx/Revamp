@@ -47,6 +47,12 @@ local args = {
 }
 game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsAPI/SetSetting"):FireServer(unpack(args))
 
+task.wait(.1)
+local args = {
+	"40BILLION"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("CodeRedemptionAPI/AttemptRedeemCode"):InvokeServer(unpack(args))
+
 
 local ClientData = require(game:GetService("ReplicatedStorage").ClientModules.Core.ClientData)
 local PetData = ClientData.get_data()[game.Players.LocalPlayer.Name].inventory.pets
