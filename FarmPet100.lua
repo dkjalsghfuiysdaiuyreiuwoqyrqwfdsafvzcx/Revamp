@@ -49,7 +49,7 @@ game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("SettingsA
 
 task.wait(.1)
 local args = {
-	"VISITS"
+	"THE"
 }
 game:GetService("ReplicatedStorage"):WaitForChild("API"):WaitForChild("CodeRedemptionAPI/AttemptRedeemCode"):InvokeServer(unpack(args))
 
